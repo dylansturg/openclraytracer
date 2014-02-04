@@ -1,7 +1,7 @@
-﻿Build started 2/4/2014 4:50:10 PM.
+﻿Build started 2/4/2014 5:09:11 PM.
      1>Project "C:\Users\sturgedl\Documents\git\openclraytracer\ParallelSumOpenCL\ParallelSumOpenCL\ParallelSumOpenCL.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I../../include /I"C:/Program Files (x86)/Intel/OpenCL SDK/3.0/include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ParallelSumOpenCL.cpp stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I../../include /I"C:\Program Files (x86)\Intel\OpenCL SDK\3.0/include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ParallelSumOpenCL.cpp stdafx.cpp
          stdafx.cpp
          ParallelSumOpenCL.cpp
      1>c:\users\sturgedl\documents\git\openclraytracer\parallelsumopencl\parallelsumopencl\cstylehelloworld.h(89): warning C4018: '<' : signed/unsigned mismatch
@@ -14,4 +14,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:08.22
+Time Elapsed 00:00:08.17

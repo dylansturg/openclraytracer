@@ -21,8 +21,22 @@ void checkErr(cl_int err, const char* name){
 	}
 }
 
+typedef struct{
+	cl_int one;
+	cl_int two;
+}someInts;
 
 int helloWorld(){
+	int structCount = 5;
+	someInts myInts[5];
+
+
+	for (int i = 0; i < structCount; i++){
+		myInts[i].one = i;
+		myInts[i].two = i + 1;
+	}
+
+
 	cl_int err;
 
 	vector<cl::Platform> platformList;
@@ -44,14 +58,16 @@ int helloWorld(){
 
 	checkErr(err, "Context::Context()");
 
-	char* outH = new char[hw.length() + 1];
+	char* outH = new char[hw.length() + 5];
 
 	cl::Buffer outCL(
 		context,
 		CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
-		hw.length()+1,
+		hw.length()+5,
 		outH,
 		&err);
+
+	cl::Buffer inCL(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(someInts)*structCount, (void*)&myInts, &err);
 
 	checkErr(err, "Buffer::Buffer()");
 
@@ -77,8 +93,10 @@ int helloWorld(){
 
 	cl::Kernel kernel(program, "helloworld", &err);
 
+
 	checkErr(err, "kernel");
-	err = kernel.setArg(0, outCL);
+	err = kernel.setArg(0, inCL);
+	err = kernel.setArg(1, outCL);
 	checkErr(err, "set arg");
 
 	cl::CommandQueue queue(context, devices[0], 0, &err);
@@ -87,7 +105,7 @@ int helloWorld(){
 
 	cl::Event event;
 
-	err = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(hw.length()+1), cl::NDRange(1, 1), NULL, &event);
+	err = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(structCount), cl::NDRange(1, 1), NULL, &event);
 
 	checkErr(err, "enqueueNDRangeKernel");
 

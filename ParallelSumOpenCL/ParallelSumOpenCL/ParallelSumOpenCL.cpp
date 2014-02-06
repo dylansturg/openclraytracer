@@ -18,9 +18,8 @@
 
 using namespace std;
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
-	return CStyleHelloWorld();
+	return helloWorld();
 }
 

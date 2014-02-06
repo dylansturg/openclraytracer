@@ -9,6 +9,7 @@
 #include <string>
 #include <iterator>
 #include <vector>
+#include "taco.h"
 
 using namespace std;
 
@@ -36,6 +37,8 @@ int helloWorld(){
 		myInts[i].two = i + 1;
 	}
 
+	float tempArray[3] = { 43.0f, 44.0f, 45.0f };
+	taco yummyTaco(1, tempArray, 'c');
 
 	cl_int err;
 
@@ -67,7 +70,7 @@ int helloWorld(){
 		outH,
 		&err);
 
-	cl::Buffer inCL(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(someInts)*structCount, (void*)&myInts, &err);
+	cl::Buffer inCL(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(taco), (void*)&yummyTaco, &err);
 
 	checkErr(err, "Buffer::Buffer()");
 
@@ -105,7 +108,7 @@ int helloWorld(){
 
 	cl::Event event;
 
-	err = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(structCount), cl::NDRange(1, 1), NULL, &event);
+	err = queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1,1), cl::NDRange(1, 1), NULL, &event);
 
 	checkErr(err, "enqueueNDRangeKernel");
 

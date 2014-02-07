@@ -91,9 +91,6 @@ int CStyleHelloWorld()
 		clGetPlatformInfo(platforms[i], (cl_platform_info)CL_PLATFORM_VENDOR, 100, &vendor[0], NULL);
 		cout << "Vendor: " << vendor << endl;
 
-		if(vendor.find("Intel") != string::npos){
-			platform = platforms[i];
-		}
 	}
 
 	free(platforms);

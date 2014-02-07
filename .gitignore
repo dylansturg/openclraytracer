@@ -44,6 +44,7 @@ ipch/
 [Dd]ebug*/
 [Rr]elease*/
 Ankh.NoLoad
+ParallelSumOpenCL.sln.DotSettings
 
 #MonoDevelop
 *.pidb

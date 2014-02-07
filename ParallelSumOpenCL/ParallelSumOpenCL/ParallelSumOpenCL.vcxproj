@@ -14,6 +14,7 @@
     <ProjectGuid>{8D1DD84F-5B35-4722-B2FA-681073F70C32}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ParallelSumOpenCL</RootNamespace>
+    <ProjectName>OpenCLRayTracer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -89,16 +90,20 @@
     <ClInclude Include="obj_parser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="string_extra.h" />
+    <ClInclude Include="structs.h" />
     <ClInclude Include="taco.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="list.cpp" />
     <ClCompile Include="obj_parser.cpp" />
-    <ClCompile Include="ParallelSumOpenCL.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="string_extra.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HitPointCalculator.cl" />
     <None Include="lesson1_kernels.cl" />
     <None Include="objLoader.cpp" />
   </ItemGroup>

@@ -27,25 +27,25 @@ public:
 
 
 private:
-	cl_float Pos[3];
-	cl_float u[3], v[3], w[3];
+	cl_float3 Pos;
+	cl_float3 u, v, w;
 
 	void setBasis(Vector3 Pos, Vector3 lookAt, Vector3 up)
 	{
 		Vector3 wTemp = lookAt - Pos;
 		Vector3 vecW = -wTemp.normalize();
 
-		Vector3 uTemp = up.cross(this->w);
+		Vector3 uTemp = up.cross(this->w.s);
 		Vector3 vecU = uTemp.normalize();
 
-		Vector3 vecV = vecW.cross(u);
+		Vector3 vecV = vecW.cross(u.s);
 
 		for (int i = 0; i < 3; i++)
 		{
-			this->Pos[i] = Pos[i];
-			this->u[i] = vecU[i];
-			this->v[i] = vecV[i];
-			this->w[i] = vecW[i];
+			this->Pos.s[i] = Pos[i];
+			this->u.s[i] = vecU[i];
+			this->v.s[i] = vecV[i];
+			this->w.s[i] = vecW[i];
 		}
 	}
 };

@@ -12,9 +12,9 @@ public:
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			this->ambient[i] = mat->amb[i];
-			this->diffuse[i] = mat->diff[i];
-			this->specular[i] = mat->spec[i];
+			this->ambient.s[i] = mat->amb[i];
+			this->diffuse.s[i] = mat->diff[i];
+			this->specular.s[i] = mat->spec[i];
 		}
 
 		this->shiny = mat->shiny;
@@ -23,17 +23,17 @@ public:
 		this->glossy = mat->glossy;
 	}
 
-	Vector3 getAmbient()
+	cl_float3 getAmbient()
 	{
 		return this->ambient;
 	}
 
-	Vector3 getDiffuse()
+	cl_float3 getDiffuse()
 	{
 		return this->diffuse;
 	}
 
-	Vector3 getSpecular()
+	cl_float3 getSpecular()
 	{
 		return this->specular;
 	}
@@ -47,9 +47,9 @@ public:
 	}
 
 private:
-	cl_float ambient[3];
-	cl_float diffuse[3];
-	cl_float specular[3];
+	cl_float3 ambient;
+	cl_float3 diffuse;
+	cl_float3 specular;
 	cl_float shiny;
 	cl_float reflect;
 	cl_float transparency;

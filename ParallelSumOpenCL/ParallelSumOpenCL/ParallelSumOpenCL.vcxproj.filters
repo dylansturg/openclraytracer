@@ -27,6 +27,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="GenVector.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Kernel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lesson1_kernels.cl" />

@@ -63,15 +63,15 @@ public:
 		checkErr(status, "Failed to obtain target devices.");
 
 		/*Step 3: Create context.*/
-		cl_context context = clCreateContext(NULL,1, devices,NULL,NULL,NULL);
+		clContext = clCreateContext(NULL,1, devices,NULL,NULL,NULL);
 
 		/*Step 4: Creating command queue associate with the context.*/
-		cl_command_queue commandQueue = clCreateCommandQueue(context, devices[0], 0, NULL);
+		clCommandQueue = clCreateCommandQueue(clContext, devices[0], 0, NULL);
 
 		/*Step 5: Create program object */
 		size_t sourceSize[] = {programSource.size()};
 		const char* source = programSource.c_str();
-		cl_program program = clCreateProgramWithSource(context, 1, &source, sourceSize, NULL);
+		cl_program program = clCreateProgramWithSource(clContext, 1, &source, sourceSize, NULL);
 
 		/*Step 6: Build program. */
 		status=clBuildProgram(program, 1,devices,NULL,NULL,NULL);
@@ -102,8 +102,7 @@ public:
 			return clEnqueueNDRangeKernel(this->clCommandQueue, this->clKernel, work_dim, NULL, global_work_size, local_work_size, num_events_in_wait_list, event_wait_list, event);
 	}
 
-	int readBuffer(	cl_command_queue command_queue,
-		cl_mem buffer,
+	int readBuffer(cl_mem buffer,
 		cl_bool blocking_read,
 		size_t offset,
 		size_t readSize,
@@ -113,6 +112,15 @@ public:
 		cl_event *event = NULL)
 	{
 		return clEnqueueReadBuffer(this->clCommandQueue, buffer, blocking_read, offset, readSize, outBufferPtr, num_events_in_wait_list, event_wait_list, event);
+	}
+
+
+	cl_mem createBuffer(cl_mem_flags flags,
+		size_t size,
+		void *host_ptr,
+		cl_int *errcode_ret)
+	{
+		return clCreateBuffer(this->clContext, flags, size, host_ptr, errcode_ret);
 	}
 
 private:

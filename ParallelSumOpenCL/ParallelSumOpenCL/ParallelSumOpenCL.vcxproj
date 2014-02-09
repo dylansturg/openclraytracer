@@ -110,6 +110,7 @@
     <ClCompile Include="string_extra.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HelloWorld_Kernel.cl" />
     <None Include="HitPointCalculator.cl" />
     <None Include="lesson1_kernels.cl" />
   </ItemGroup>

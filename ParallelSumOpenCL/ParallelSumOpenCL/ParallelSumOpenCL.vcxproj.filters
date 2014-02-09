@@ -34,6 +34,7 @@
     <None Include="HitPointCalculator.cl">
       <Filter>kernels</Filter>
     </None>
+    <None Include="HelloWorld_Kernel.cl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

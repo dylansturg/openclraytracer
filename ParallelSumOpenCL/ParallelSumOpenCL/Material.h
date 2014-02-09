@@ -47,13 +47,13 @@ public:
 	}
 
 private:
-	Cl_float ambient[3];
-	Cl_float diffuse[3];
-	Cl_float specular[3];
-	Cl_float shiny;
-	Cl_float reflect;
-	Cl_float transparency;
-	Cl_float glossy;
+	cl_float ambient[3];
+	cl_float diffuse[3];
+	cl_float specular[3];
+	cl_float shiny;
+	cl_float reflect;
+	cl_float transparency;
+	cl_float glossy;
 };
 
 #endif

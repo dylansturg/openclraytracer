@@ -21,19 +21,19 @@ public:
 		this->materialID = materialID;
 	}
 
-	CL_float * getLightPosition()
+	cl_float * getLightPosition()
 	{
 		return this->lightPosition;
 	}
 
-	CL_int getMaterialID()
+	cl_int getMaterialID()
 	{
 		return this->materialID;
 	}
 
 private:
-	CL_float lightPosition[3];
-	CL_int materialID;
+	cl_float lightPosition[3];
+	cl_int materialID;
 
 };
 

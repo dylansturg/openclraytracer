@@ -1,36 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="obj_parser.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="list.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="obj_parser.cpp" />
+    <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="string_extra.cpp" />
+    <ClCompile Include="simplePPM.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMDHelloWorldSample.h" />
     <ClInclude Include="CStyleHelloWorld.h" />
-    <ClInclude Include="list.h" />
-    <ClInclude Include="objLoader.h" />
-    <ClInclude Include="obj_parser.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="string_extra.h" />
-    <ClInclude Include="taco.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Triangle.h" />
-    <ClInclude Include="structs.h">
-      <Filter>kernels</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="list.h" />
+    <ClInclude Include="obj_parser.h" />
+    <ClInclude Include="objLoader.h" />
+    <ClInclude Include="string_extra.h" />
+    <ClInclude Include="structs.h" />
+    <ClInclude Include="taco.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="simplePPM.h" />
+    <ClInclude Include="Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lesson1_kernels.cl" />
-    <None Include="objLoader.cpp" />
-    <None Include="HitPointCalculator.cl">
-      <Filter>kernels</Filter>
-    </None>
+    <None Include="HitPointCalculator.cl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

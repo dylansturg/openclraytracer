@@ -107,6 +107,7 @@
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="obj_parser.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="simplePPM.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="string_extra.cpp" />
   </ItemGroup>

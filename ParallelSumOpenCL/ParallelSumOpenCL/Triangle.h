@@ -18,22 +18,22 @@
 class Triangle{
 public:
 
-	Triangle(cl_float a[], cl_float b[], cl_float c[], cl_int materialIndex, cl_float normal[]){
+	Triangle(cl_float3 a, cl_float3 b, cl_float3 c, cl_int materialIndex, cl_float3 normal){
 		for (int i = 0; i < 3; i++){
-			this->a[i] = a[i];
-			this->b[i] = b[i];
-			this->c[i] = c[i];
-			this->normal[i] = normal[i];
+			this->a.s[i] = a.s[i];
+			this->b.s[i] = b.s[i];
+			this->c.s[i] = c.s[i];
+			this->normal.s[i] = normal.s[i];
 		}	
 		this->materialIndex = materialIndex;
 
 	}
 
 private:
-	cl_float a[3];
-	cl_float b[3];
-	cl_float c[3];
-	cl_float normal[3];
+	cl_float3 a;
+	cl_float3 b;
+	cl_float3 c;
+	cl_float3 normal;
 	cl_int materialIndex;
 };
 #endif

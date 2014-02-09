@@ -12,11 +12,11 @@ public:
 
 	}
 
-	Light(Vector3 lightPosition, int materialID)
+	Light(cl_float3 lightPosition, int materialID)
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			this->lightPosition.s[i] = lightPosition[i];
+			this->lightPosition.s[i] = lightPosition.s[i];
 		}
 		this->materialID = materialID;
 	}

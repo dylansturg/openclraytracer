@@ -86,11 +86,13 @@
     <ClInclude Include="AMDHelloWorldSample.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CStyleHelloWorld.h" />
+    <ClInclude Include="GenVector.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="obj_parser.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="string_extra.h" />
     <ClInclude Include="structs.h" />

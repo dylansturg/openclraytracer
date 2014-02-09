@@ -15,11 +15,13 @@
 
 #include "AMDHelloWorldSample.h"
 #include "CStyleHelloWorld.h"
+#include "Scene.h"
 
 using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Scene scene;
 	return CStyleHelloWorld();
 }
 

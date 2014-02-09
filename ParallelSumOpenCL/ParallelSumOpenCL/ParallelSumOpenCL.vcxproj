@@ -14,6 +14,7 @@
     <ProjectGuid>{8D1DD84F-5B35-4722-B2FA-681073F70C32}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ParallelSumOpenCL</RootNamespace>
+    <ProjectName>OpenCLRayTracer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -83,15 +84,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMDHelloWorldSample.h" />
-    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CStyleHelloWorld.h" />
+    <ClInclude Include="GenVector.h" />
+    <ClInclude Include="Kernel.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="obj_parser.h" />
-    <ClInclude Include="simplePPM.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="string_extra.h" />
     <ClInclude Include="structs.h" />
@@ -101,14 +103,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="list.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="obj_parser.cpp" />
-    <ClCompile Include="simplePPM.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="string_extra.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HelloWorld_Kernel.cl" />
     <None Include="HitPointCalculator.cl" />
     <None Include="lesson1_kernels.cl" />
   </ItemGroup>

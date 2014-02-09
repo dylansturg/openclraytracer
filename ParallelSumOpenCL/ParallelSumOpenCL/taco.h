@@ -1,4 +1,7 @@
 
+#ifndef _TACO_H_
+#define _TACO_H_
+
 class taco{
 public:
 	taco(int salsa, float lettuce[], char cheese){
@@ -10,8 +13,10 @@ public:
 	}
 
 private:
-	
+
 	cl_float3 lettuce;
 	cl_int salsa;
 	cl_char cheese;
 };
+
+#endif

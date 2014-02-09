@@ -16,6 +16,7 @@
 #include "AMDHelloWorldSample.h"
 #include "CStyleHelloWorld.h"
 #include "Scene.h"
+#include "objLoader.h"
 
 using namespace std;
 

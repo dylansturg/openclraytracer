@@ -6,6 +6,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="list.cpp" />
     <ClCompile Include="string_extra.cpp" />
+    <ClCompile Include="objLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AMDHelloWorldSample.h" />
@@ -29,7 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lesson1_kernels.cl" />
-    <None Include="objLoader.cpp" />
     <None Include="HitPointCalculator.cl">
       <Filter>kernels</Filter>
     </None>

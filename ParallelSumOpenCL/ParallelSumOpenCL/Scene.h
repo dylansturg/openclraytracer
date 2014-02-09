@@ -19,6 +19,7 @@
 #include "Material.h"
 #include "Light.h"
 #include "Camera.h"
+#include "GenVector.h"
 
 class Scene{
 public:
@@ -86,12 +87,12 @@ public:
 
 		//create camera
 		//obj_vector* initPos = objData->vertexList[ objData->camera->camera_pos_index ];
-		/*cl_float3 init = convertToVector(objData->vertexList[objData->camera->camera_pos_index]);
-		cl_float3 look = convertToVector(objData->vertexList[objData->camera->camera_look_point_index]);
-		cl_float3 upVec = convertToVector(objData->normalList[objData->camera->camera_up_norm_index]);*/
+		Vector3 init = convertToGenVector(objData->vertexList[objData->camera->camera_pos_index]);
+		Vector3 look = convertToGenVector(objData->vertexList[objData->camera->camera_look_point_index]);
+		Vector3 upVec = convertToGenVector(objData->normalList[objData->camera->camera_up_norm_index]);
 
 
-		camera = Camera(objData);
+		camera = Camera(init, look, upVec);
 
 
 	}
@@ -121,6 +122,9 @@ public:
 	return *this;
 	}*/
 
+	Vector3 convertToGenVector(obj_vector* convertMe){
+		return Vector3(convertMe->e[0], convertMe->e[1], convertMe->e[2]);
+	}
 
 
 

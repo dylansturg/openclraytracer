@@ -2,13 +2,13 @@
 Ray getRay(__global Camera* cam, int x, int y, float w, float h);
 int intersect( HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int triangleID);
 
-__kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, __global int* resolution, __global Ray* rays, __global HitPoint* hitPoints)
+__kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 {
 
 	int id = get_global_id(0);
-	int x = id % resolution[0];
-	int y = id / resolution[0];
-	Ray ray = getRay(camera, x, y, (float) resolution[0], (float) resolution[1]);
+	int x = id % width;
+	int y = id / width;
+	Ray ray = getRay(camera, x, y, (float) width, (float) height);
     HitPoint hitPoint;
     hitPoint.t = FLT_MAX;
     

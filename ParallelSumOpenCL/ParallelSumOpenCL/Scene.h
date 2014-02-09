@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include <utility>
-#include <CL/cl.hpp>
+#include <CL/cl.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -129,10 +129,6 @@ public:
 
 
 private:
-	cl_float3 a;
-	cl_float3 b;
-	cl_float3 c;
-	cl_float3 normal;
-	cl_int materialIndex;
+
 };
 #endif

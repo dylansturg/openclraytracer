@@ -1,3 +1,5 @@
+#pragma once
+
 #include <CL/cl.h>
 #include <string>
 #include <iostream>
@@ -6,14 +8,14 @@
 
 using namespace std;
 
-class Kernel{
+class ClKernel{
 public:
-	Kernel()
+	ClKernel()
 	{
 
 	}
 
-	Kernel(string sourceFileName, long deviceType, string kernelFuncName)
+	ClKernel(string sourceFileName, long deviceType, string kernelFuncName)
 	{
 		string programSource;
 		if(convertToString(sourceFileName, programSource)){
@@ -83,7 +85,7 @@ public:
 
 	}
 
-	~Kernel(){
+	~ClKernel(){
 		clReleaseKernel(this->clKernel);
 		clReleaseCommandQueue(this->clCommandQueue);
 		clReleaseContext(this->clContext);

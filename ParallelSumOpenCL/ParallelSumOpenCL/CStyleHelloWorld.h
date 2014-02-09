@@ -23,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "Kernel.h"
+#include "ClKernel.h"
 
 
 
@@ -63,11 +63,18 @@ int convertToString(const char *filename, std::string& s)
 	return FAILURE;
 }
 
+void checkErr(cl_int err, const char* name){
+	if (err != CL_SUCCESS){
+		std::cerr << "ERROR: " << name << " (" << err << ")" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
 int CStyleHelloWorld()
 {
 	cl_int err;
 	string hw("Hello World!");
-	Kernel clKernel("HelloWorld_Kernel.cl", CL_DEVICE_TYPE_CPU, "helloworld");
+	ClKernel clKernel("HelloWorld_Kernel.cl", CL_DEVICE_TYPE_CPU, "helloworld");
 
 
 	cl_mem inputBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY|CL_MEM_COPY_HOST_PTR, (hw.size() + 1) * sizeof(char),(void *) hw.c_str(), &err);

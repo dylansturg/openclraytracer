@@ -3,7 +3,7 @@
 
 #include "objLoader.h"
 #include "GenVector.h"
-#include "CL/cl.hpp"
+#include <CL/cl.h>
 
 class Camera
 {

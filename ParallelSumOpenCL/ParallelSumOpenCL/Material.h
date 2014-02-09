@@ -3,7 +3,7 @@
 
 #include "GenVector.h"
 #include "objLoader.h"
-#include "CL/cl.hpp"
+#include <CL/cl.h>
 
 class Material
 {

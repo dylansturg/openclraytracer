@@ -87,7 +87,8 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CStyleHelloWorld.h" />
     <ClInclude Include="GenVector.h" />
-    <ClInclude Include="Kernel.h" />
+    <ClInclude Include="HitPoint.h" />
+    <ClInclude Include="ClKernel.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="Material.h" />

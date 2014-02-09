@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include <utility>
-#include <CL/cl.hpp>
+#include <CL/cl.h>
 
 #include <cstdio>
 #include <cstdlib>

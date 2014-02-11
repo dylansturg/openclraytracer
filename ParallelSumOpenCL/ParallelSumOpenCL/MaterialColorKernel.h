@@ -14,6 +14,8 @@ class MaterialColorKernel{
 public:
 
 	MaterialColorKernel(int width, int height, Scene& scene, vector<HitPoint>& hitPoints, vector<Vector3>& outColors){
+		vector<float> kernelColors;
+		kernelColors.resize(width*height*3);
 
 		cl_int err;
 		ClKernel clKernel("MaterialShaderKernel.cl", CL_DEVICE_TYPE_CPU, "calculateMaterialColors");
@@ -43,14 +45,17 @@ public:
 		err = clKernel.setKernelArg(2, sizeof(cl_mem), (void *)&colorsBuffer);
 		clKernel.checkErr(err, "setting kernel arg 2");
 
+
+
 		/*Step 10: Running the kernel.*/
 		size_t global_work_size[1] = { width*height };
 		err = clKernel.runKernel(1, global_work_size, NULL, 0, NULL, NULL);
+		clKernel.checkErr(err, "starting the kernel");
 
 		/*Step 11: Read the cout put back to host memory.*/
-		vector<float> kernelColors;
-		kernelColors.resize(width*height * 3);
+		
 		err = clKernel.readBuffer(colorsBuffer, CL_TRUE, 0, width*height*3 * sizeof(float), (void*)&kernelColors[0], 0, NULL, NULL);
+		clKernel.checkErr(err, "starting the read buffer");
 
 		/*Step 12: Clean the resources.*/
 

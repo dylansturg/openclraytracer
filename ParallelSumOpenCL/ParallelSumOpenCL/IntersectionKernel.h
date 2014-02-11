@@ -55,16 +55,21 @@ public:
 		/*Step 10: Running the kernel.*/
 		size_t global_work_size[1] = { width*height };
 		err = clKernel.runKernel(1, global_work_size, NULL, 0, NULL, NULL);
+		clKernel.checkErr(err, "starting kernel");
 
 		/*Step 11: Read the cout put back to host memory.*/
 		outHits.resize(width*height);
 		err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height * sizeof(HitPoint), (void*)&outHits[0], 0, NULL, NULL);
+		clKernel.checkErr(err, "reading buffer");
 
 		/*Step 12: Clean the resources.*/
 
 		err = clReleaseMemObject(trianglesBuffer);		//Release mem object.
+		clKernel.checkErr(err, "freeing args");
 		err = clReleaseMemObject(cameraBuffer);
+		clKernel.checkErr(err, "freeing args");
 		err = clReleaseMemObject(hitPoints);
+		clKernel.checkErr(err, "freeing args");
 	}
 
 private:

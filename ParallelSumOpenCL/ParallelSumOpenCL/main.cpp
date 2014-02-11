@@ -20,8 +20,9 @@
 #include "ClKernel.h"
 #include "HitPoint.h"
 #include "IntersectionKernel.h"
+#include "MaterialColorKernel.h"
 
-#define RES 100
+#define RES 2000
 
 using namespace std;
 
@@ -33,13 +34,13 @@ int main(int argc, char* argv[])
 
 	/*
 		HitPoint kernel - calculates hitpoints using triangles (3 vertices) and finds a t, position, and index
-			output - Hits and Rays
+		output - Hits and Rays
 
 		Material Kernel - calculates ambient colors using hitpoints and materials
-			output - Colors (from material)
+		output - Colors (from material)
 
 		Shading kernel - calculates lighting (ambient, diffuse, specular, and shadows) with color values and lights
-	*/
+		*/
 
 
 	int width = RES;
@@ -49,37 +50,66 @@ int main(int argc, char* argv[])
 
 	IntersectionKernel intersections(width, height, scene, outHits);
 
+
+	vector<Vector3> outColors;
+	MaterialColorKernel materialColors(width, height, scene, outHits, outColors);
+
 	std::cout << "Passed!\n";
 	Buffer buffer = Buffer(RES, RES);
 
 	float maxt = 0;
 	for (int i = 0; i < width*height; i++){
-		if (outHits[i].t < (FLT_MAX - 1.0f)){
-			if (outHits[i].t > maxt){
-				maxt = outHits[i].t;
+		for (int j = 0; j < 3; j++){
+			if (outColors[i][j] < (FLT_MAX - 1.0f)){
+				if (outColors[i][j] > maxt){
+					maxt = outColors[i][j];
+				}
+			}
+			else {
+				outColors[i][j] = 0;
 			}
 		}
-		else {
-			outHits[i].t = 0;
-		}
 	}
-
-	cout << "max t: " << maxt << endl;
 
 
 	for (int y = 0; y < RES; y++)
 	{
 		for (int x = 0; x < RES; x++)
 		{
-			float a = (outHits[y*width + x].t / maxt) *255.0f;
-			
-			Color c = Color(abs(a), abs(a), abs(a));
-			if (a <= 0){
-				c = Color(255, 0, 0);
-			}
-			buffer.at(x, RES-y-1) = c;
+			float a = (outColors[y*width + x][0] / maxt) *255.0f;
+			float b = (outColors[y*width + x][1] / maxt) *255.0f;
+			float d = (outColors[y*width + x][2] / maxt) *255.0f;
+
+			Color c = Color(abs(a), abs(b), abs(d));
+
+			buffer.at(x, RES - y - 1) = c;
 		}
 	}
+
+	//for (int i = 0; i < width*height; i++){
+	//	if (outHits[i].t < (FLT_MAX - 1.0f)){
+	//		if (outHits[i].t > maxt){
+	//			maxt = outHits[i].t;
+	//		}
+	//	}
+	//	else {
+	//		outHits[i].t = 0;
+	//	}
+
+	//}
+
+	//for (int y = 0; y < RES; y++)
+	//{
+	//	for (int x = 0; x < RES; x++)
+	//	{
+	//		float a = (outHits[y*width + x].t / maxt) *255.0f;
+
+
+	//		Color c = Color(abs(a), abs(a), abs(a));
+
+	//		buffer.at(x, RES - y - 1) = c;
+	//	}
+	//}
 
 	simplePPM_write_ppm("ray.ppm", RES, RES, (unsigned char *)&buffer.at(0, 0));
 

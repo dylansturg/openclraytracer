@@ -31,10 +31,10 @@ public:
 	}
 
 private:
-	cl_float3 a;
-	cl_float3 b;
-	cl_float3 c;
-	cl_float3 normal;
+	cl_float4 a;
+	cl_float4 b;
+	cl_float4 c;
+	cl_float4 normal;
 	cl_int materialIndex;
 };
 #endif

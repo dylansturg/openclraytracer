@@ -9,6 +9,7 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
 	int x = id % width;
 	int y = id / width;
 	Ray ray = getRay(camera, x, y, (float) width, (float) height);
+
     HitPoint hitPoint;
     hitPoint.t = FLT_MAX;
     
@@ -18,10 +19,20 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
     
 //    hitPoints[id] = hitPoint;
 
+	hitPoints[3*id] = hitPoint.t;
+	hitPoints[3*id+1] = ray.direction.y;
+	hitPoints[3*id+2] = ray.direction.z;
 
-		hitPoints[id] = ray.direction.x;
-		hitPoints[id+1] = ray.direction.y;
-		hitPoints[id+2] = ray.direction.z;
+	if(id==0){
+		hitPoints[0] = triangles[0].A.x;
+		hitPoints[1] = triangles[0].A.y;
+		hitPoints[2] = triangles[0].A.z;
+
+	}
+	
+
+
+
 
 }
 
@@ -109,12 +120,12 @@ int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int t
 	float t = -(f * ak_minus_jb + e * jc_minus_al + d * bl_minus_kc) / M;
 	if (t > 0 && beta + gamma <= 1) {
         if(hitPoint->t > t)
-        {
+		{
             hitPoint->t = t;
             hitPoint->triangleID = triangleID;
             hitPoint->position = E + D * t;
 		    return 0;
-        }
+       }
     }
 	return -1;
 

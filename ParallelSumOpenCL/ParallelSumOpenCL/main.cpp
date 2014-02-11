@@ -20,7 +20,7 @@
 #include "ClKernel.h"
 #include "HitPoint.h"
 
-#define RES 10
+#define RES 100
 
 using namespace std;
 
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
 	vector<Triangle> triangles = scene.shapes;
 
-	cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
+	cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()+1) * sizeof(Triangle), (void *)&triangles[0], &err);
 	checkErr(err, "creating triangle buffer");
 
 	Camera camera = scene.camera;
@@ -107,18 +107,21 @@ int main(int argc, char* argv[])
 	cout << "max t: " << maxt << endl;
 
 
-	for (int y = 1; y <= RES; y++)
+	for (int y = 0; y < RES; y++)
 	{
 		for (int x = 0; x < RES; x++)
 		{
-			float a = output[(y - 1)*width + x];
-			float b = output[(y - 1)*width + x + 1];
-			float d = output[(y - 1)*width + x + 2];
+			float a = output[(y )*3*width + x*3]*255.0f;
+			float b = output[(y)* 3 * width + x * 3 + 1] * 255.0f;
+			float d = output[(y)* 3 * width + x * 3 + 2] * 255.0f;
 
-
+			//cout << "Direction " << a / 255.0f << " " << b / 255.0f << " " << d / 255.0f << endl;
 			
-			Color c = Color((unsigned char)(abs(a)*255.0f), (unsigned char)(abs(b)*255.0f), (unsigned char)(abs(d)*255.0f));
-			buffer.at(x, RES - y) = c;
+			Color c = Color(abs(a), abs(a), abs(a));
+			if (a <= 0){
+				c = Color(255, 0, 0);
+			}
+			buffer.at(x, RES-y-1) = c;
 		}
 	}
 

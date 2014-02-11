@@ -31,7 +31,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("Blue_sphere.obj");
+		objData->load("day4.obj");
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)
@@ -41,8 +41,10 @@ public:
 			cl_float3 a = convertToVector(objData->vertexList[o->vertex_index[0]]);
 			cl_float3 b = convertToVector(objData->vertexList[o->vertex_index[1]]);
 			cl_float3 c = convertToVector(objData->vertexList[o->vertex_index[2]]);
-			cl_float3 normal = convertToVector(objData->normalList[o->vertex_index[0]]); //all vertices same normal
-			shapes.push_back(Triangle(a, b, c, o->material_index, normal));
+			//cl_float3 normal = convertToVector(objData->normalList[o->vertex_index[0]]); //all vertices same normal
+			cl_float3 n;
+			n.s[0] = 0;
+			shapes.push_back(Triangle(a, b, c, o->material_index, n));
 
 		}
 

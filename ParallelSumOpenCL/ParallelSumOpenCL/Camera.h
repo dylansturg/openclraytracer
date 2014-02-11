@@ -37,7 +37,9 @@ public:
 
 private:
 	cl_float3 Pos;
-	cl_float3 u, v, w;
+	cl_float3 u;
+	cl_float3 v;
+	cl_float3 w;
 
 };
 

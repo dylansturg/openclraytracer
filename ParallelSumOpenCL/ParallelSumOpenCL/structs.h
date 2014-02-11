@@ -23,10 +23,11 @@ typedef struct{
 } Material;
 
 typedef struct{
+	float3 position;
 	float3 u;
 	float3 v;
 	float3 w;
-	float3 position;
+
 } Camera;
 
 typedef struct{

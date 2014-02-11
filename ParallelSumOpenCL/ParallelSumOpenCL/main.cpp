@@ -20,7 +20,7 @@
 #include "ClKernel.h"
 #include "HitPoint.h"
 
-#define RES 100
+#define RES 10
 
 using namespace std;
 
@@ -37,11 +37,6 @@ int main(int argc, char* argv[])
 	ClKernel clKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_CPU, "calculateHitPoints");
 
 	vector<Triangle> triangles = scene.shapes;
-	/*for (int i = 0; i < 10; i++){
-
-		triangles.push_back(Triangle());
-
-	}*/
 
 	cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
 	checkErr(err, "creating triangle buffer");
@@ -50,10 +45,10 @@ int main(int argc, char* argv[])
 	cl_mem cameraBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (1) * sizeof(Camera), (void *)&camera, &err);
 	checkErr(err, "creating camera buffer");
 
-	cl_mem hitPoints = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height) * sizeof(float), NULL, &err);
+	cl_mem hitPoints = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height*3) * sizeof(float), NULL, &err);
 	checkErr(err, "creating output buffer");
 
-	int trianglesSize = 10;// triangles.size();
+	int trianglesSize = triangles.size();
 
 	// __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 
@@ -82,9 +77,9 @@ int main(int argc, char* argv[])
 
 	/*Step 11: Read the cout put back to host memory.*/
 	vector<float> output;
-	output.resize(width*height);
-	//HitPoint* outHits = (HitPoint*)malloc(width*height*sizeof(HitPoint));
-	err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height * sizeof(float), (void*)&output[0], 0, NULL, NULL);
+	output.resize(width*height*3);
+	HitPoint* outHits = (HitPoint*)malloc(width*height*sizeof(HitPoint));
+	err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height*3 * sizeof(float), (void*)&output[0], 0, NULL, NULL);
 
 	/*Step 12: Clean the resources.*/
 
@@ -92,13 +87,13 @@ int main(int argc, char* argv[])
 	err = clReleaseMemObject(cameraBuffer);
 	err = clReleaseMemObject(hitPoints);
 
-	//free(outHits);
+	free(outHits);
 
 	std::cout << "Passed!\n";
 	Buffer buffer = Buffer(RES, RES);
 
 	float maxt = 0;
-	for (int i = 0; i < width*height; i++){
+	for (int i = 0; i < width*height*3; i++){
 		if (output[i] < (FLT_MAX - 1.0f)){
 			if (output[i] > maxt){
 				maxt = output[i];
@@ -116,10 +111,13 @@ int main(int argc, char* argv[])
 	{
 		for (int x = 0; x < RES; x++)
 		{
-			float t = output[(y - 1)*width + x];
-			t /= maxt;
-			t *= 255.0f;
-			Color c = Color((char)t, (char)t, (char)t);
+			float a = output[(y - 1)*width + x];
+			float b = output[(y - 1)*width + x + 1];
+			float d = output[(y - 1)*width + x + 2];
+
+
+			
+			Color c = Color((unsigned char)(abs(a)*255.0f), (unsigned char)(abs(b)*255.0f), (unsigned char)(abs(d)*255.0f));
 			buffer.at(x, RES - y) = c;
 		}
 	}

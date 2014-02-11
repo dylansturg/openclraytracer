@@ -17,7 +17,11 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
     }     
     
 //    hitPoints[id] = hitPoint;
-	hitPoints[id] = hitPoint.t;
+
+
+		hitPoints[id] = ray.direction.x;
+		hitPoints[id+1] = ray.direction.y;
+		hitPoints[id+2] = ray.direction.z;
 
 }
 
@@ -34,6 +38,11 @@ Ray getRay(__global Camera* cam, int x, int y, float w, float h)
 	float vPos = b + ( h * ((float)y + 0.5)) / h;
 
 	ray.direction = (-(h/2) * cam->w + uPos * cam->u + vPos * cam->v);
+
+	float len = ray.direction.x * ray.direction.x + ray.direction.y * ray.direction.y + ray.direction.z * ray.direction.z;
+	len = sqrt(len);
+	ray.direction /= len;
+
 	return ray;
 }
 

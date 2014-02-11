@@ -33,28 +33,7 @@ public:
 		objLoader *objData = new objLoader();
 		objData->load("Blue_sphere.obj");
 
-		//create triangles and add
-
-		//Vector3 pos = Vector3();
-		//std::vector<LightPoint> lightPoints;
-
-		/*float radius;
-		for (int i = 0; i<objData->sphereCount; i++)
-		{
-		obj_sphere *o = objData->sphereList[i];
-		pos = convertToVector(objData->vertexList[o->pos_index]);
-		Vector3 radiusVec = convertToVector(objData->normalList[o->up_normal_index]);
-		radius = radiusVec.length();
-		sphere * tempSphere = new sphere(pos, radius);
-		tempSphere->materialIndex = o->material_index;
-		shapeHolder.addSphere(tempSphere);
-
-		//printVector(objData->normalList[ o->up_normal_index ]);
-		//printVector(objData->normalList[ o->equator_normal_index ]);
-
-		}*/
-
-		//create Triangles and add to new shape holder class or make old class better
+		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)
 		{
 			obj_face *o = objData->faceList[i];
@@ -86,7 +65,6 @@ public:
 
 
 		//create camera
-		//obj_vector* initPos = objData->vertexList[ objData->camera->camera_pos_index ];
 		Vector3 init = convertToGenVector(objData->vertexList[objData->camera->camera_pos_index]);
 		Vector3 look = convertToGenVector(objData->vertexList[objData->camera->camera_look_point_index]);
 		Vector3 upVec = convertToGenVector(objData->normalList[objData->camera->camera_up_norm_index]);
@@ -104,23 +82,6 @@ public:
 		retVal.s[2] = convertMe->e[2];
 		return retVal;
 	}
-
-	/*GenVector& normalize()
-	{
-	T normalizeLength;
-	normalizeLength = this->length();
-
-	#ifdef VECTOR_ERROR_CHECKING
-	if (normalizeLength <= EPSILON)
-	{
-	throw(1);
-	return *this;
-	}
-	#endif
-
-	*this /= normalizeLength;
-	return *this;
-	}*/
 
 	Vector3 convertToGenVector(obj_vector* convertMe){
 		return Vector3(convertMe->e[0], convertMe->e[1], convertMe->e[2]);

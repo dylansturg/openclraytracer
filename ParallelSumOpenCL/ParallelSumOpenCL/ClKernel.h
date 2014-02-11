@@ -73,15 +73,14 @@ public:
 		/*Step 5: Create program object */
 		size_t sourceSize[] = {programSource.size()};
 		const char* source = programSource.c_str();
-		cl_program program = clCreateProgramWithSource(clContext, 1, &source, sourceSize, NULL);
+		this->clProgram = clCreateProgramWithSource(clContext, 1, &source, sourceSize, NULL);
 
 		/*Step 6: Build program. */
-		status=clBuildProgram(program, 1,devices,NULL,NULL,NULL);
+		status=clBuildProgram(this->clProgram, 1,devices,NULL,NULL,NULL);
 
-		this->clKernel = clCreateKernel(program,kernelFuncName.c_str(), &err);
+		this->clKernel = clCreateKernel(this->clProgram,kernelFuncName.c_str(), &err);
 
 		free(devices);
-		clReleaseProgram(program);
 
 	}
 
@@ -89,6 +88,7 @@ public:
 		clReleaseKernel(this->clKernel);
 		clReleaseCommandQueue(this->clCommandQueue);
 		clReleaseContext(this->clContext);
+		clReleaseProgram(this->clProgram);
 	}
 
 	int setKernelArg(cl_uint argIndex, size_t argSize, const void* argValue){
@@ -129,6 +129,7 @@ private:
 	cl_kernel clKernel;
 	cl_context clContext;
 	cl_command_queue clCommandQueue;
+	cl_program clProgram;
 
 
 	int convertToString(string filename, string& s)

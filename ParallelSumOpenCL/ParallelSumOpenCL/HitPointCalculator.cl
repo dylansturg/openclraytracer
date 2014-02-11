@@ -2,7 +2,7 @@
 Ray getRay(__global Camera* cam, int x, int y, float w, float h);
 int intersect( HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int triangleID);
 
-__kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
+__kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global float* hitPoints)
 {
 
 	int id = get_global_id(0);
@@ -16,7 +16,8 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
         intersect(&hitPoint, &ray, &(triangles[i]), i);
     }     
     
-    hitPoints[id] = hitPoint;
+//    hitPoints[id] = hitPoint;
+	hitPoints[id] = hitPoint.t;
 
 }
 

@@ -94,7 +94,7 @@ public:
 
 		camera = Camera(init, look, upVec);
 
-
+		delete objData;
 	}
 
 	cl_float3 convertToVector(obj_vector* convertMe){

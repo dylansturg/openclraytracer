@@ -2,7 +2,7 @@
 Ray getRay(__global Camera* cam, int x, int y, float w, float h);
 int intersect( HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int triangleID);
 
-__kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global float* hitPoints)
+__kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 {
 
 	int id = get_global_id(0);
@@ -19,20 +19,11 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
     
 //    hitPoints[id] = hitPoint;
 
-	hitPoints[3*id] = hitPoint.t;
-	hitPoints[3*id+1] = ray.direction.y;
-	hitPoints[3*id+2] = ray.direction.z;
-
-	if(id==0){
-		hitPoints[0] = triangles[0].A.x;
-		hitPoints[1] = triangles[0].A.y;
-		hitPoints[2] = triangles[0].A.z;
-
-	}
-	
-
-
-
+	hitPoints[id].t = hitPoint.t;
+	hitPoints[id].position[0] = hitPoint.position[0];
+	hitPoints[id].position[1] = hitPoint.position[1];
+	hitPoints[id].position[2] = hitPoint.position[2];
+	hitPoints[id].triangleID = hitPoint.triangleID;
 
 }
 
@@ -63,10 +54,11 @@ int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int t
 	float ak_minus_jb, jc_minus_al, bl_minus_kc;
 	float beta, gamma, M;
 
-	float3 A, B, C, D, E;
-	A = triangle->A;
-	B = triangle->B;
-	C = triangle->C;
+	float3 A, B, C;
+    float3 D, E;
+	A = (float3)(triangle->A[0], triangle->A[1], triangle->A[2]);
+	B = (float3)(triangle->B[0], triangle->B[1], triangle->B[2]);
+	C = (float3)(triangle->C[0], triangle->C[1], triangle->C[2]);
 	D = ray->direction;
 	E = ray->origin;
 
@@ -123,7 +115,10 @@ int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int t
 		{
             hitPoint->t = t;
             hitPoint->triangleID = triangleID;
-            hitPoint->position = E + D * t;
+            float3 pos = E + D*t;
+            hitPoint->position[0] = pos.x;
+            hitPoint->position[1] = pos.y;
+            hitPoint->position[2] = pos.z;
 		    return 0;
        }
     }

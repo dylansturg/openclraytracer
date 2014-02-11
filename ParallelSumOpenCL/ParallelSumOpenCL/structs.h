@@ -1,8 +1,8 @@
 typedef struct{
-	float3 A;
-	float3 B;
-	float3 C;
-	float3 normal;
+	float A[3];
+	float B[3];
+	float C[3];
+	float normal[3];
 	int materialIndex;
 } Triangle;
 
@@ -31,7 +31,7 @@ typedef struct{
 } Camera;
 
 typedef struct{
-	float3 position;
+	float position[3];
 	float t;
 	int triangleID;
 } HitPoint;

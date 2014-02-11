@@ -24,6 +24,12 @@
 
 using namespace std;
 
+typedef struct{
+	cl_float position[3];
+	float t;
+	int triangleID;
+} Hit;
+
 int main(int argc, char* argv[])
 {
 	Scene scene;
@@ -38,14 +44,14 @@ int main(int argc, char* argv[])
 
 	vector<Triangle> triangles = scene.shapes;
 
-	cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()+1) * sizeof(Triangle), (void *)&triangles[0], &err);
+	cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
 	checkErr(err, "creating triangle buffer");
 
 	Camera camera = scene.camera;
 	cl_mem cameraBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (1) * sizeof(Camera), (void *)&camera, &err);
 	checkErr(err, "creating camera buffer");
 
-	cl_mem hitPoints = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height*3) * sizeof(float), NULL, &err);
+	cl_mem hitPoints = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height) * sizeof(Hit), NULL, &err);
 	checkErr(err, "creating output buffer");
 
 	int trianglesSize = triangles.size();
@@ -76,10 +82,8 @@ int main(int argc, char* argv[])
 	err = clKernel.runKernel(1, global_work_size, NULL, 0, NULL, NULL);
 
 	/*Step 11: Read the cout put back to host memory.*/
-	vector<float> output;
-	output.resize(width*height*3);
-	HitPoint* outHits = (HitPoint*)malloc(width*height*sizeof(HitPoint));
-	err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height*3 * sizeof(float), (void*)&output[0], 0, NULL, NULL);
+	Hit* outHits = (Hit*)malloc(width*height*sizeof(Hit));
+	err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height * sizeof(Hit), (void*)&outHits[0], 0, NULL, NULL);
 
 	/*Step 12: Clean the resources.*/
 
@@ -87,20 +91,20 @@ int main(int argc, char* argv[])
 	err = clReleaseMemObject(cameraBuffer);
 	err = clReleaseMemObject(hitPoints);
 
-	free(outHits);
+	
 
 	std::cout << "Passed!\n";
 	Buffer buffer = Buffer(RES, RES);
 
 	float maxt = 0;
-	for (int i = 0; i < width*height*3; i++){
-		if (output[i] < (FLT_MAX - 1.0f)){
-			if (output[i] > maxt){
-				maxt = output[i];
+	for (int i = 0; i < width*height; i++){
+		if (outHits[i].t < (FLT_MAX - 1.0f)){
+			if (outHits[i].t > maxt){
+				maxt = outHits[i].t;
 			}
 		}
 		else {
-			output[i] = 0;
+			outHits[i].t = 0;
 		}
 	}
 
@@ -111,11 +115,7 @@ int main(int argc, char* argv[])
 	{
 		for (int x = 0; x < RES; x++)
 		{
-			float a = output[(y )*3*width + x*3]*255.0f;
-			float b = output[(y)* 3 * width + x * 3 + 1] * 255.0f;
-			float d = output[(y)* 3 * width + x * 3 + 2] * 255.0f;
-
-			//cout << "Direction " << a / 255.0f << " " << b / 255.0f << " " << d / 255.0f << endl;
+			float a = (outHits[y*width + x].t / maxt) *255.0f;
 			
 			Color c = Color(abs(a), abs(a), abs(a));
 			if (a <= 0){
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 	simplePPM_write_ppm("ray.ppm", RES, RES, (unsigned char *)&buffer.at(0, 0));
 
 
-
+	free(outHits);
 
 	return SUCCESS;
 }

@@ -21,20 +21,20 @@ public:
 
 	Triangle(cl_float3 a, cl_float3 b, cl_float3 c, cl_int materialIndex, cl_float3 normal){
 		for (int i = 0; i < 3; i++){
-			this->a.s[i] = a.s[i];
-			this->b.s[i] = b.s[i];
-			this->c.s[i] = c.s[i];
-			this->normal.s[i] = normal.s[i];
+			this->a[i] = a.s[i];
+			this->b[i] = b.s[i];
+			this->c[i] = c.s[i];
+			this->normal[i] = normal.s[i];
 		}	
 		this->materialIndex = materialIndex;
 
 	}
 
 private:
-	cl_float4 a;
-	cl_float4 b;
-	cl_float4 c;
-	cl_float4 normal;
+	cl_float a[3];
+	cl_float b[3];
+	cl_float c[3];
+	cl_float normal[3];
 	cl_int materialIndex;
 };
 #endif

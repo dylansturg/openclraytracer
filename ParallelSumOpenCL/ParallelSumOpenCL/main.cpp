@@ -37,6 +37,11 @@ int main(int argc, char* argv[])
 	ClKernel clKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_CPU, "calculateHitPoints");
 
 	vector<Triangle> triangles = scene.shapes;
+	/*for (int i = 0; i < 10; i++){
+
+		triangles.push_back(Triangle());
+
+	}*/
 
 	cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
 	checkErr(err, "creating triangle buffer");
@@ -48,7 +53,7 @@ int main(int argc, char* argv[])
 	cl_mem hitPoints = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height) * sizeof(float), NULL, &err);
 	checkErr(err, "creating output buffer");
 
-	int trianglesSize = triangles.size();
+	int trianglesSize = 10;// triangles.size();
 
 	// __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 
@@ -78,7 +83,7 @@ int main(int argc, char* argv[])
 	/*Step 11: Read the cout put back to host memory.*/
 	vector<float> output;
 	output.resize(width*height);
-	HitPoint* outHits = (HitPoint*)malloc(width*height*sizeof(HitPoint));
+	//HitPoint* outHits = (HitPoint*)malloc(width*height*sizeof(HitPoint));
 	err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height * sizeof(float), (void*)&output[0], 0, NULL, NULL);
 
 	/*Step 12: Clean the resources.*/
@@ -87,7 +92,7 @@ int main(int argc, char* argv[])
 	err = clReleaseMemObject(cameraBuffer);
 	err = clReleaseMemObject(hitPoints);
 
-	free(outHits);
+	//free(outHits);
 
 	std::cout << "Passed!\n";
 	Buffer buffer = Buffer(RES, RES);

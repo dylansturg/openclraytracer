@@ -17,6 +17,7 @@
 
 class Triangle{
 public:
+	Triangle(){}
 
 	Triangle(cl_float3 a, cl_float3 b, cl_float3 c, cl_int materialIndex, cl_float3 normal){
 		for (int i = 0; i < 3; i++){

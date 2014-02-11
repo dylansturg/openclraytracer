@@ -42,8 +42,7 @@ public:
 			cl_float3 b = convertToVector(objData->vertexList[o->vertex_index[1]]);
 			cl_float3 c = convertToVector(objData->vertexList[o->vertex_index[2]]);
 			cl_float3 normal = convertToVector(objData->normalList[o->vertex_index[0]]); //all vertices same normal
-			Triangle tempTriangle(a, b, c, o->material_index, normal);
-			shapes.push_back(tempTriangle);
+			shapes.push_back(Triangle(a, b, c, o->material_index, normal));
 
 		}
 
@@ -59,8 +58,7 @@ public:
 		for (int i = 0; i<objData->lightPointCount; i++)
 		{
 			obj_light_point *o = objData->lightPointList[i];
-			Light lightPoint = Light(convertToVector(objData->vertexList[o->pos_index]), o->material_index);
-			lights.push_back(lightPoint);
+			lights.push_back(Light(convertToVector(objData->vertexList[o->pos_index]), o->material_index));
 		}
 
 

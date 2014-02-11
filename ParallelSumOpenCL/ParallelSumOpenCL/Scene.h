@@ -31,7 +31,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("cornell_box.obj");
+		objData->load("Blue_sphere.obj");
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)

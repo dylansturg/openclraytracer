@@ -89,11 +89,9 @@
     <ClInclude Include="GenVector.h" />
     <ClInclude Include="HitPoint.h" />
     <ClInclude Include="ClKernel.h" />
-    <ClInclude Include="IntersectionKernel.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="MaterialColorKernel.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="obj_parser.h" />
     <ClInclude Include="Scene.h" />

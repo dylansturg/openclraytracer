@@ -125,6 +125,13 @@ public:
 		return clCreateBuffer(this->clContext, flags, size, host_ptr, errcode_ret);
 	}
 
+	void checkErr(cl_int err, const char* name){
+		if (err != CL_SUCCESS){
+			std::cerr << "ERROR: " << name << " (" << err << ")" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+
 private:
 	cl_kernel clKernel;
 	cl_context clContext;
@@ -160,13 +167,6 @@ private:
 		}
 		cout<<"Error: failed to open file\n:"<<filename<<endl;
 		return -1;
-	}
-
-	void checkErr(cl_int err, const char* name){
-		if(err != CL_SUCCESS){
-			std::cerr << "ERROR: " << name << " (" << err << ")" << std::endl;
-			exit(EXIT_FAILURE);
-		}
 	}
 
 };

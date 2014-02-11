@@ -1,6 +1,6 @@
 #include "structs.h"
 Ray getRay(__global Camera* cam, int x, int y, float w, float h);
-int intersect( HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int triangleID);
+int intersect( HitPoint* hitPoint, Ray * ray, __global Triangle * triangle);
 
 __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 {
@@ -14,7 +14,7 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
     hitPoint.t = FLT_MAX;
     
     for(int i = 0; i < trianglesSize; i++){
-        intersect(&hitPoint, &ray, &(triangles[i]), i);
+        intersect(&hitPoint, &ray, &(triangles[i]));
     }     
     
 //    hitPoints[id] = hitPoint;
@@ -23,7 +23,7 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
 	hitPoints[id].position[0] = hitPoint.position[0];
 	hitPoints[id].position[1] = hitPoint.position[1];
 	hitPoints[id].position[2] = hitPoint.position[2];
-	hitPoints[id].triangleID = hitPoint.triangleID;
+	hitPoints[id].materialId = hitPoint.materialId;
 
 }
 
@@ -48,7 +48,7 @@ Ray getRay(__global Camera* cam, int x, int y, float w, float h)
 	return ray;
 }
 
-int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int triangleID){
+int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle){
 	float a, b, c, d, e, f, g, h, i, j, k, l;
 	float ei_minus_hf, gf_minus_di, dh_minus_eg;
 	float ak_minus_jb, jc_minus_al, bl_minus_kc;
@@ -114,7 +114,7 @@ int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle, int t
         if(hitPoint->t > t)
 		{
             hitPoint->t = t;
-            hitPoint->triangleID = triangleID;
+            hitPoint->materialId = triangle->materialId;
             float3 pos = E + D*t;
             hitPoint->position[0] = pos.x;
             hitPoint->position[1] = pos.y;

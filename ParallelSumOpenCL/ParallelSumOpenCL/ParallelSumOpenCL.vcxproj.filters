@@ -30,6 +30,8 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="HitPoint.h" />
     <ClInclude Include="ClKernel.h" />
+    <ClInclude Include="IntersectionKernel.h" />
+    <ClInclude Include="MaterialColorKernel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lesson1_kernels.cl" />
@@ -37,6 +39,9 @@
       <Filter>kernels</Filter>
     </None>
     <None Include="HelloWorld_Kernel.cl" />
+    <None Include="MaterialShaderKernel.cl">
+      <Filter>kernels</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

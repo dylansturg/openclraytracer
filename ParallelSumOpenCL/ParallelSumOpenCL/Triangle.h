@@ -14,6 +14,7 @@
 #include <iterator>
 #include <vector>
 #include "taco.h"
+#include "GenVector.h"
 
 class Triangle{
 public:
@@ -24,10 +25,9 @@ public:
 			this->a[i] = a.s[i];
 			this->b[i] = b.s[i];
 			this->c[i] = c.s[i];
-			this->normal[i] = normal.s[i];
 		}	
 		this->materialIndex = materialIndex;
-
+		calculateNormal();
 	}
 
 private:
@@ -36,5 +36,22 @@ private:
 	cl_float c[3];
 	cl_float normal[3];
 	cl_int materialIndex;
+
+	void calculateNormal(){
+		Vector3 aTemp;
+		Vector3 bTemp;
+		Vector3 cTemp;
+		for (int i = 0; i < 3; i++){
+			aTemp.c[i] = a[i];
+			bTemp.c[i] = b[i];
+			cTemp.c[i] = c[i];
+		}
+
+		Vector3 n = (bTemp - aTemp).cross(cTemp - bTemp).normalize();
+
+		for (int i = 0; i < 3; i++){
+			this->normal[i] = n.c[i];
+		}
+	}
 };
 #endif

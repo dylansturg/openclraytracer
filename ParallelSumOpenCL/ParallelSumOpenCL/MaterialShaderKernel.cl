@@ -1,6 +1,6 @@
 #include "structs.h"
 
-__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global float* colors)
+__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, __global float* colors)
 {
 	int id = get_global_id(0);
 
@@ -15,4 +15,11 @@ __kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Mat
     colors[3*id+0] = ambient[0];
     colors[3*id+1] = ambient[1];
     colors[3*id+2] = ambient[2];
+}
+
+float3 calculateLighting(__global Material* hitMaterial, __global Light* light, __global Material* lightMaterial, __Hitpoint* hitpoint, float3 viewDirection)
+{
+	float3 ambColor = hitMaterial->amb * lightMaterial->amb;
+	float3 diffColor = hitMaterial->diff * () * lightMaterial->diff;
+
 }

@@ -2,6 +2,7 @@
 Ray getRay(__global Camera* cam, int x, int y, float w, float h);
 int intersect( HitPoint* hitPoint, Ray * ray, __global Triangle * triangle);
 
+
 __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 {
 
@@ -23,8 +24,12 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
 	hitPoints[id].position[0] = hitPoint.position[0];
 	hitPoints[id].position[1] = hitPoint.position[1];
 	hitPoints[id].position[2] = hitPoint.position[2];
-	hitPoints[id].materialId = hitPoint.materialId;
 
+	hitPoints[id].normal[0] = hitPoint.normal[0];
+	hitPoints[id].normal[1] = hitPoint.normal[1];
+	hitPoints[id].normal[2] = hitPoint.normal[2];
+
+	hitPoints[id].materialId = hitPoint.materialId;
 }
 
 Ray getRay(__global Camera* cam, int x, int y, float w, float h)
@@ -41,9 +46,7 @@ Ray getRay(__global Camera* cam, int x, int y, float w, float h)
 
 	ray.direction = (-(h/2) * cam->w + uPos * cam->u + vPos * cam->v);
 
-	float len = ray.direction.x * ray.direction.x + ray.direction.y * ray.direction.y + ray.direction.z * ray.direction.z;
-	len = sqrt(len);
-	ray.direction /= len;
+    normalize(ray.direction);
 
 	return ray;
 }
@@ -119,6 +122,13 @@ int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle){
             hitPoint->position[0] = pos.x;
             hitPoint->position[1] = pos.y;
             hitPoint->position[2] = pos.z;
+            
+            float3 norm = (float3) (triangle->normal[0], triangle->normal[1],triangle->normal[2]);
+            normalize(norm);
+            
+			hitPoint->normal[0] = norm.x;
+			hitPoint->normal[1] = norm.y;
+			hitPoint->normal[2] = norm.z;
 		    return 0;
        }
     }

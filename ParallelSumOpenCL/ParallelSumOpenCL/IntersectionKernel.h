@@ -6,13 +6,14 @@
 #include "Triangle.h"
 #include "HitPoint.h"
 #include "Scene.h"
+#include "ClRay.h"
 
 using namespace std;
 
 class IntersectionKernel{
 public:
 
-	IntersectionKernel(int width, int height, Scene& scene, vector<HitPoint>& outHits){
+	IntersectionKernel(int width, int height, Scene& scene, vector<HitPoint>& outHits, vector<ClRay>& outRays){
 
 		cl_int err;
 		ClKernel clKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_CPU, "calculateHitPoints");
@@ -28,6 +29,7 @@ public:
 
 		cl_mem hitPoints = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height) * sizeof(HitPoint), NULL, &err);
 		clKernel.checkErr(err, "creating output buffer");
+
 
 		int trianglesSize = triangles.size();
 
@@ -51,6 +53,7 @@ public:
 
 		err = clKernel.setKernelArg(5, sizeof(cl_mem), (void *)&hitPoints);
 		clKernel.checkErr(err, "setting kernel arg 5");
+
 
 		/*Step 10: Running the kernel.*/
 		size_t global_work_size[1] = { width*height };

@@ -7,7 +7,7 @@ typedef struct{
 } Triangle;
 
 typedef struct{
-	float3 position;
+	float position[3];
 	int materialIndex;
 } Light;
 
@@ -32,6 +32,7 @@ typedef struct{
 
 typedef struct{
 	float position[3];
+	float normal[3];
 	float t;
 	int materialId;
 } HitPoint;

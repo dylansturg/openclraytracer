@@ -16,12 +16,12 @@ public:
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			this->lightPosition.s[i] = lightPosition.s[i];
+			this->lightPosition[i] = lightPosition.s[i];
 		}
 		this->materialID = materialID;
 	}
 
-	cl_float3 getLightPosition()
+	cl_float* getLightPosition()
 	{
 		return this->lightPosition;
 	}
@@ -32,7 +32,7 @@ public:
 	}
 
 private:
-	cl_float3 lightPosition;
+	cl_float lightPosition[3];
 	cl_int materialID;
 
 };

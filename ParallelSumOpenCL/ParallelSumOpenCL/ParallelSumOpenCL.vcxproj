@@ -85,6 +85,7 @@
   <ItemGroup>
     <ClInclude Include="AMDHelloWorldSample.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ClRay.h" />
     <ClInclude Include="CStyleHelloWorld.h" />
     <ClInclude Include="GenVector.h" />
     <ClInclude Include="HitPoint.h" />

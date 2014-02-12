@@ -41,10 +41,12 @@ public:
 			cl_float3 a = convertToVector(objData->vertexList[o->vertex_index[0]]);
 			cl_float3 b = convertToVector(objData->vertexList[o->vertex_index[1]]);
 			cl_float3 c = convertToVector(objData->vertexList[o->vertex_index[2]]);
-			//cl_float3 normal = convertToVector(objData->normalList[o->vertex_index[0]]); //all vertices same normal
-			cl_float3 n;
-			n.s[0] = 0;
-			shapes.push_back(Triangle(a, b, c, o->material_index, n));
+			cl_float3 normal;
+			normal.s[0] = 0;
+			if (o->normal_index >= 0){
+				normal = convertToVector(objData->normalList[o->normal_index[0]]); //all vertices same normal
+			}
+			shapes.push_back(Triangle(a, b, c, o->material_index, normal));
 
 		}
 

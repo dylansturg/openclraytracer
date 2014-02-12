@@ -65,18 +65,22 @@ public:
 		checkErr(status, "Failed to obtain target devices.");
 
 		/*Step 3: Create context.*/
-		clContext = clCreateContext(NULL,1, devices,NULL,NULL,NULL);
+		clContext = clCreateContext(NULL,1, devices,NULL,NULL,&err);
+		checkErr(err, "Failed to create context");
 
 		/*Step 4: Creating command queue associate with the context.*/
-		clCommandQueue = clCreateCommandQueue(clContext, devices[0], 0, NULL);
+		clCommandQueue = clCreateCommandQueue(clContext, devices[0], 0, &err);
+		checkErr(err, "Failed to create command queue");
 
 		/*Step 5: Create program object */
 		size_t sourceSize[] = {programSource.size()};
 		const char* source = programSource.c_str();
-		this->clProgram = clCreateProgramWithSource(clContext, 1, &source, sourceSize, NULL);
+		this->clProgram = clCreateProgramWithSource(clContext, 1, &source, sourceSize, &err);
+		checkErr(err, "Failed to create program");
 
 		/*Step 6: Build program. */
 		status=clBuildProgram(this->clProgram, 1,devices,NULL,NULL,NULL);
+		checkErr(status, "Build program failure");
 
 		this->clKernel = clCreateKernel(this->clProgram,kernelFuncName.c_str(), &err);
 

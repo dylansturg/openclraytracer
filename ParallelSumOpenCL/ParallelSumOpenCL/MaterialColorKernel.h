@@ -21,6 +21,7 @@ public:
 		ClKernel clKernel("MaterialShaderKernel.cl", CL_DEVICE_TYPE_CPU, "calculateMaterialColors");
 
 		vector<Material> materials = scene.materials;
+		vector<Light> lights = scene.lights;
 
 
 		//__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global float* colors)
@@ -32,6 +33,9 @@ public:
 		cl_mem materialsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (materials.size()) * sizeof(Material), (void *)&materials[0], &err);
 		clKernel.checkErr(err, "creating materials buffer");
 
+		cl_mem lightsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (lights.size()) * sizeof(Light), (void *)&lights[0], &err);
+		clKernel.checkErr(err, "creating lights buffer");
+
 		cl_mem colorsBuffer = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height*3) * sizeof(float), NULL, &err);
 		clKernel.checkErr(err, "creating output buffer");
 
@@ -42,8 +46,11 @@ public:
 		err = clKernel.setKernelArg(1, sizeof(cl_mem), &materialsBuffer);
 		clKernel.checkErr(err, "setting kernel arg 1");
 
-		err = clKernel.setKernelArg(2, sizeof(cl_mem), (void *)&colorsBuffer);
+		err = clKernel.setKernelArg(2, sizeof(cl_mem), &lightsBuffer);
 		clKernel.checkErr(err, "setting kernel arg 2");
+
+		err = clKernel.setKernelArg(3, sizeof(cl_mem), (void *)&colorsBuffer);
+		clKernel.checkErr(err, "setting kernel arg 3");
 
 
 

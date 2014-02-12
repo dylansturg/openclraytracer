@@ -21,8 +21,8 @@
 #include "HitPoint.h"
 #include "IntersectionKernel.h"
 #include "MaterialColorKernel.h"
-
-#define RES 2000
+#include "ClRay.h"
+#define RES 100
 
 using namespace std;
 
@@ -47,8 +47,8 @@ int main(int argc, char* argv[])
 	int height = RES;
 
 	vector<HitPoint> outHits;
-
-	IntersectionKernel intersections(width, height, scene, outHits);
+	vector<ClRay> outRays;
+	IntersectionKernel intersections(width, height, scene, outHits, outRays);
 
 
 	vector<Vector3> outColors;
@@ -57,34 +57,34 @@ int main(int argc, char* argv[])
 	std::cout << "Passed!\n";
 	Buffer buffer = Buffer(RES, RES);
 
-	float maxt = 0;
-	for (int i = 0; i < width*height; i++){
-		for (int j = 0; j < 3; j++){
-			if (outColors[i][j] < (FLT_MAX - 1.0f)){
-				if (outColors[i][j] > maxt){
-					maxt = outColors[i][j];
-				}
-			}
-			else {
-				outColors[i][j] = 0;
-			}
-		}
-	}
+	//float maxt = 0;
+	//for (int i = 0; i < width*height; i++){
+	//	for (int j = 0; j < 3; j++){
+	//		if (outColors[i][j] < (FLT_MAX - 1.0f)){
+	//			if (outColors[i][j] > maxt){
+	//				maxt = outColors[i][j];
+	//			}
+	//		}
+	//		else {
+	//			outColors[i][j] = 0;
+	//		}
+	//	}
+	//}
 
 
-	for (int y = 0; y < RES; y++)
-	{
-		for (int x = 0; x < RES; x++)
-		{
-			float a = (outColors[y*width + x][0] / maxt) *255.0f;
-			float b = (outColors[y*width + x][1] / maxt) *255.0f;
-			float d = (outColors[y*width + x][2] / maxt) *255.0f;
+	//for (int y = 0; y < RES; y++)
+	//{
+	//	for (int x = 0; x < RES; x++)
+	//	{
+	//		float a = (outColors[y*width + x][0] / maxt) *255.0f;
+	//		float b = (outColors[y*width + x][1] / maxt) *255.0f;
+	//		float d = (outColors[y*width + x][2] / maxt) *255.0f;
 
-			Color c = Color(abs(a), abs(b), abs(d));
+	//		Color c = Color(abs(a), abs(b), abs(d));
 
-			buffer.at(x, RES - y - 1) = c;
-		}
-	}
+	//		buffer.at(x, RES - y - 1) = c;
+	//	}
+	//}
 
 	//for (int i = 0; i < width*height; i++){
 	//	if (outHits[i].t < (FLT_MAX - 1.0f)){
@@ -98,18 +98,20 @@ int main(int argc, char* argv[])
 
 	//}
 
-	//for (int y = 0; y < RES; y++)
-	//{
-	//	for (int x = 0; x < RES; x++)
-	//	{
-	//		float a = (outHits[y*width + x].t / maxt) *255.0f;
+	for (int y = 0; y < RES; y++)
+	{
+		for (int x = 0; x < RES; x++)
+		{
+			float a = (outHits[y*width + x].normal[0]) *255.0f;
+			float b = (outHits[y*width + x].normal[1]) *255.0f;
+			float d = (outHits[y*width + x].normal[2]) *255.0f;
 
 
-	//		Color c = Color(abs(a), abs(a), abs(a));
+			Color c = Color(abs(a), abs(b), abs(d));
 
-	//		buffer.at(x, RES - y - 1) = c;
-	//	}
-	//}
+			buffer.at(x, RES - y - 1) = c;
+		}
+	}
 
 	simplePPM_write_ppm("ray.ppm", RES, RES, (unsigned char *)&buffer.at(0, 0));
 

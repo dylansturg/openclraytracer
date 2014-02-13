@@ -13,11 +13,11 @@ typedef struct{
 
 typedef struct{
 
-	float3 amb;
-	float3 diff;
-	float3 spec;
-	float reflect;
+	float amb[3];
+	float diff[3];
+	float spec[3];
 	float shiny;
+	float reflect;
 	float transparency;
 	float glossy;
 } Material;

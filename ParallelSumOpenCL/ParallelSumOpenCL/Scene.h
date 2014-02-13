@@ -31,7 +31,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("cornell_box.obj");
+		objData->load("Blue_sphere.obj");
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)
@@ -43,9 +43,9 @@ public:
 			cl_float3 c = convertToVector(objData->vertexList[o->vertex_index[2]]);
 			cl_float3 normal;
 			normal.s[0] = 0;
-			if (o->normal_index >= 0){
-				normal = convertToVector(objData->normalList[o->normal_index[0]]); //all vertices same normal
-			}
+			//if (o->normal_index >= 0){
+			//	normal = convertToVector(objData->normalList[o->normal_index[0]]); //all vertices same normal
+			//}
 			shapes.push_back(Triangle(a, b, c, o->material_index, normal));
 
 		}

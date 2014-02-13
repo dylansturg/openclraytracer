@@ -24,8 +24,6 @@ public:
 		vector<Light> lights = scene.lights;
 
 
-		//__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global float* colors)
-
 		cl_mem hitPointsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (hitPoints.size()) * sizeof(HitPoint), (void *)&hitPoints[0], &err);
 		clKernel.checkErr(err, "creating hit points buffer");
 
@@ -39,17 +37,33 @@ public:
 		cl_mem colorsBuffer = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height*3) * sizeof(float), NULL, &err);
 		clKernel.checkErr(err, "creating output buffer");
 
-		/*Step 9: Sets Kernel arguments.*/
-		err = clKernel.setKernelArg(0, sizeof(cl_mem), (void *)&hitPointsBuffer);
+		
+		//__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, int lightSize, __global float* colors, __global float* cameraOrigin)
+		int argIndex = 0;
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&hitPointsBuffer);
 		clKernel.checkErr(err, "setting kernel arg 0");
 
-		err = clKernel.setKernelArg(1, sizeof(cl_mem), &materialsBuffer);
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), &materialsBuffer);
 		clKernel.checkErr(err, "setting kernel arg 1");
 
-		err = clKernel.setKernelArg(2, sizeof(cl_mem), &lightsBuffer);
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), &lightsBuffer);
 		clKernel.checkErr(err, "setting kernel arg 2");
 
-		err = clKernel.setKernelArg(3, sizeof(cl_mem), (void *)&colorsBuffer);
+		int lightCount = lights.size();
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_int), (void *)&lightCount);
+		clKernel.checkErr(err, "setting kernel arg 3");
+
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&colorsBuffer);
+		clKernel.checkErr(err, "setting kernel arg 3");
+		
+		float origin[] = { scene.camera.Pos.s[0], scene.camera.Pos.s[1], scene.camera.Pos.s[2] };
+		err = clKernel.setKernelArg(argIndex++, sizeof(float), (void *)&origin[0]);
+		clKernel.checkErr(err, "setting kernel arg 3");
+
+		err = clKernel.setKernelArg(argIndex++, sizeof(float), (void *)&origin[1]);
+		clKernel.checkErr(err, "setting kernel arg 3");
+
+		err = clKernel.setKernelArg(argIndex++, sizeof(float), (void *)&origin[2]);
 		clKernel.checkErr(err, "setting kernel arg 3");
 
 

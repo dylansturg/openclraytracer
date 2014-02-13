@@ -22,7 +22,7 @@
 #include "IntersectionKernel.h"
 #include "MaterialColorKernel.h"
 #include "ClRay.h"
-#define RES 200
+#define RES 2000
 
 using namespace std;
 

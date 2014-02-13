@@ -18,7 +18,7 @@ public:
 		kernelColors.resize(width*height*3);
 
 		cl_int err;
-		ClKernel clKernel("MaterialShaderKernel.cl", CL_DEVICE_TYPE_CPU, "calculateMaterialColors");
+		ClKernel clKernel("MaterialShaderKernel.cl", CL_DEVICE_TYPE_GPU, "calculateMaterialColors");
 
 		vector<Material> materials = scene.materials;
 		vector<Light> lights = scene.lights;

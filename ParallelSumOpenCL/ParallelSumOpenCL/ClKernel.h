@@ -80,6 +80,14 @@ public:
 
 		/*Step 6: Build program. */
 		status=clBuildProgram(this->clProgram, 1,devices,NULL,NULL,NULL);
+		if (status != CL_SUCCESS)
+		{
+			cout << "Program Build failed\n";
+			size_t length;
+			char buffer[2048];
+			clGetProgramBuildInfo(this->clProgram, devices[0], CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &length);
+			cout << "--- Build log ---\n " << buffer << endl;
+		}
 		checkErr(status, "Build program failure");
 
 		this->clKernel = clCreateKernel(this->clProgram,kernelFuncName.c_str(), &err);

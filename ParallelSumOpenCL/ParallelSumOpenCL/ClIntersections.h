@@ -14,21 +14,21 @@ int intersect(HitPoint* hitPoint, Ray * ray, __global Triangle * triangle){
 	D = ray->direction;
 	E = ray->origin;
 
-	a = A[0] - B[0];
-	b = A[1] - B[1];
-	c = A[2] - B[2];
+	a = A.x - B.x;
+	b = A.y - B.y;
+	c = A.z - B.z;
 
-	d = A[0] - C[0];
-	e = A[1] - C[1];
-	f = A[2] - C[2];
+	d = A.x - C.x;
+	e = A.y - C.y;
+	f = A.z - C.z;
 
-	g = D[0];
-	h = D[1];
-	i = D[2];
+	g = D.x;
+	h = D.y;
+	i = D.z;
 
-	j = A[0] - E[0];
-	k = A[1] - E[1];
-	l = A[2] - E[2];
+	j = A.x - E.x;
+	k = A.y - E.y;
+	l = A.z - E.z;
 
 	ei_minus_hf = e * i - h * f;
 	gf_minus_di = g * f - d * i;

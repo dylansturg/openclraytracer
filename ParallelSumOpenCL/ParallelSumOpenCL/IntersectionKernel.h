@@ -16,7 +16,7 @@ public:
 	IntersectionKernel(int width, int height, Scene& scene, vector<HitPoint>& outHits, vector<ClRay>& outRays){
 
 		cl_int err;
-		ClKernel clKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_CPU, "calculateHitPoints");
+		ClKernel clKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_GPU, "calculateHitPoints");
 
 		vector<Triangle> triangles = scene.shapes;
 

@@ -1,10 +1,9 @@
 #include "structs.h"
 #include "ClIntersections.h"
 
-float3 calculateLighting(__global Material* hitMaterial, __global Light* light, __global Material* lightMaterial, __global HitPoint* hitpoint, float3 viewDirection, __global Triangle* triangles, int triangleSize);
-int intersectScene(__global Triangle* triangles, int triangleSize, Ray* ray, HitPoint* hitPoint);
+float3 calculateLighting(__global Material* hitMaterial, __global Light* light, __global Material* lightMaterial, __global HitPoint* hitpoint, float3 viewDirection, __global Triangle* triangles, int triangleSize, __global Node* nodes, int nodeCount);
 
-__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, int lightSize, __global Triangle* triangles, int triangleSize, __global float* colors, float cameraOriginX, float cameraOriginY, float cameraOriginZ)
+__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, int lightSize, __global Triangle* triangles, int triangleSize, __global Node* nodeLists, int nodeCount, __global float* colors, float cameraOriginX, float cameraOriginY, float cameraOriginZ)
 {
 	int id = get_global_id(0);
     
@@ -14,7 +13,7 @@ __kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Mat
     float3 origin = (float3) (cameraOriginX, cameraOriginY, cameraOriginZ);
     if(hitPoints[id].t < (FLT_MAX - 1.0f)){
         for(int i=0; i < lightSize; i++){
-             color += calculateLighting(&materials[hitPoints[id].materialId], &lights[i], &materials[lights[i].materialIndex], &hitPoints[id], origin, triangles, triangleSize);
+             color += calculateLighting(&materials[hitPoints[id].materialId], &lights[i], &materials[lights[i].materialIndex], &hitPoints[id], origin, triangles, triangleSize, nodeLists, nodeCount);
          }
     } else{
          color = (float3)(0,0,0);   
@@ -27,17 +26,7 @@ __kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Mat
 
 }
 
-int intersectScene(__global Triangle* triangles, int triangleSize, Ray* ray, HitPoint* hitPoint)
-{
-     for(int i=0; i < triangleSize; i++){
-         if(intersectTriangle(hitPoint, ray, &triangles[i]) >= 0){
-          //    return 0;   
-         }
-    }
-    return -1;
-}
-
-float3 calculateLighting(__global Material* hitMaterial, __global Light* light, __global Material* lightMaterial, __global HitPoint* hitpoint, float3 viewDirection, __global Triangle* triangles, int triangleSize)
+float3 calculateLighting(__global Material* hitMaterial, __global Light* light, __global Material* lightMaterial, __global HitPoint* hitpoint, float3 viewDirection, __global Triangle* triangles, int triangleSize, __global Node* nodes, int nodeCount)
 {
     float3 hit = (float3)(hitpoint->position[0], hitpoint->position[1], hitpoint->position[2]);
     float3 lightPos = (float3)(light->position[0], light->position[1], light->position[2]);
@@ -59,7 +48,7 @@ float3 calculateLighting(__global Material* hitMaterial, __global Light* light, 
     hitPoint.t = FLT_MAX;
     hitPoint.materialId = -1;
     
-    intersectScene(triangles, triangleSize, &lightRay, &hitPoint);
+    intersectTree(&hitPoint, &lightRay, nodes, nodeCount, triangles, triangleSize);
     if( hitPoint.t < (FLT_MAX - 1.0f)){
         float3 hitPos = (float3)(hitPoint.position[0], hitPoint.position[1], hitPoint.position[2]);
         if(distance(hitPos, lightRay.origin) < distance(lightPos, lightRay.origin)){

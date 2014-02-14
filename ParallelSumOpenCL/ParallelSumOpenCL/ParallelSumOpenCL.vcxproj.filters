@@ -49,6 +49,7 @@
     <ClInclude Include="CPURayTracer\Rays\Hit.h">
       <Filter>CPURayTracer</Filter>
     </ClInclude>
+    <ClInclude Include="ClIntersections.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lesson1_kernels.cl" />

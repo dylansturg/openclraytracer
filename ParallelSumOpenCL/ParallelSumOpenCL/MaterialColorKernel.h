@@ -23,12 +23,16 @@ public:
 		vector<Material> materials = scene.materials;
 		vector<Light> lights = scene.lights;
 		vector<Triangle> triangles = scene.shapes;
+		vector<BVHNode>* nodes = scene.tree.getNodesList();
 
 		cl_mem hitPointsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (hitPoints.size()) * sizeof(HitPoint), (void *)&hitPoints[0], &err);
 		clKernel.checkErr(err, "creating hit points buffer");
 
 		cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
-		clKernel.checkErr(err, "creating hit points buffer");
+		clKernel.checkErr(err, "creating triangles buffer");
+
+		cl_mem nodesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (nodes->size()) * sizeof(BVHNode), (void *)&(*nodes)[0], &err);
+		clKernel.checkErr(err, "creating nodes buffer");
 
 		cl_mem materialsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (materials.size()) * sizeof(Material), (void *)&materials[0], &err);
 		clKernel.checkErr(err, "creating materials buffer");
@@ -40,7 +44,7 @@ public:
 		clKernel.checkErr(err, "creating output buffer");
 
 		
-		//__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, int lightSize, __global Triangle* triangles, int triangleSize, __global float* colors, float cameraOriginX, float cameraOriginY, float cameraOriginZ)
+		//__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, int lightSize, __global Triangle* triangles, int triangleSize, __global Node* nodeLists, int nodeCount, __global float* colors, float cameraOriginX, float cameraOriginY, float cameraOriginZ)
 		int argIndex = 0;
 		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&hitPointsBuffer);
 		clKernel.checkErr(err, "setting kernel arg 0");
@@ -60,6 +64,13 @@ public:
 
 		int triangleCount = triangles.size();
 		err = clKernel.setKernelArg(argIndex++, sizeof(cl_int), (void *)&triangleCount);
+		clKernel.checkErr(err, "setting kernel arg 3");
+
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&nodesBuffer);
+		clKernel.checkErr(err, "setting kernel arg 3");
+
+		int nodesCount = nodes->size();
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_int), (void *)&nodesCount);
 		clKernel.checkErr(err, "setting kernel arg 3");
 		
 		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&colorsBuffer);

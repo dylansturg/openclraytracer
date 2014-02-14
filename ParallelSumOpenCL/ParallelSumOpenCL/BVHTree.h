@@ -4,6 +4,7 @@
 #include "BVHNode.h"
 #include <vector>
 #include "Triangle.h"
+#include "CPURayTracer\Rays\Ray.h"
 
 
 using namespace std;
@@ -13,15 +14,24 @@ class BVHTree
 public:
 	BVHTree(vector<Triangle> & triangleList)
 	{		
-		nodesList.push_back(BVHNode(triangleList, nodesList, 0, triangleList.size()));
+		this->nodesList = new vector<BVHNode>();
+		nodesList->push_back(BVHNode(triangleList, nodesList, 0, triangleList.size()));
 	}
 
-	vector<BVHNode> & getNodesList(){
+	BVHTree(){
+
+	}
+
+	vector<BVHNode>* getNodesList(){
 		return this->nodesList;
 	}
 
+	void intersect(Ray& ray){
+		(*this->nodesList)[this->nodesList->size() - 1].intersect(ray);
+	}
+
 private:
-	vector<BVHNode> nodesList;
+	vector<BVHNode>* nodesList;
 };
 
 

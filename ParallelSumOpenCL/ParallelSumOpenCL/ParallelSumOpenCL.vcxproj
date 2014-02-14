@@ -90,6 +90,10 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ClRay.h" />
     <ClInclude Include="comparator.h" />
+    <ClInclude Include="CPURayTracer\Rays\Hit.h" />
+    <ClInclude Include="CPURayTracer\Rays\Ray.h" />
+    <ClInclude Include="CPURayTracer\Rays\RayGenerator.h" />
+    <ClInclude Include="CPURayTracer\RayTracer.h" />
     <ClInclude Include="CStyleHelloWorld.h" />
     <ClInclude Include="GenVector.h" />
     <ClInclude Include="HitPoint.h" />

@@ -23,7 +23,9 @@
 #include "MaterialColorKernel.h"
 #include "ClRay.h"
 #include "BVHTree.h"
-#define RES 1000
+#include "CPURayTracer\RayTracer.h"
+
+#define RES 100
 
 using namespace std;
 
@@ -33,7 +35,20 @@ int main(int argc, char* argv[])
 {
 	Scene scene;
 
-	BVHTree tree = BVHTree(scene.shapes);
+	RayTracer cpuTracer = RayTracer(false);
+	cpuTracer.setFrameBuffer(RES, RES);
+	cpuTracer.renderRayDirectionsToImage("cputracer.ppm");
+
+	vector<BVHNode>* nodes = scene.tree.getNodesList();
+	vector<int> triangleIndices;
+	for (int i = 0; i < nodes->size(); i++){
+		if (nodes->at(i).isLeaf){
+			triangleIndices.push_back(nodes->at(i).left);
+			if (nodes->at(i).right >= 0){
+				triangleIndices.push_back(nodes->at(i).right);
+			}
+		}
+	}
 
 	/*
 		HitPoint kernel - calculates hitpoints using triangles (3 vertices) and finds a t, position, and index

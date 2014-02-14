@@ -20,6 +20,8 @@
 #include "Light.h"
 #include "Camera.h"
 #include "GenVector.h"
+#include "CPURayTracer\Rays\Ray.h"
+#include "BVHTree.h"
 
 class Scene{
 public:
@@ -27,6 +29,7 @@ public:
 	std::vector<Material> materials;
 	std::vector<Light> lights;
 	Camera camera;
+	BVHTree tree;
 
 	Scene(){
 
@@ -75,6 +78,8 @@ public:
 		camera = Camera(init, look, upVec);
 
 		delete objData;
+
+		this->tree = BVHTree(this->shapes);
 	}
 
 	cl_float3 convertToVector(obj_vector* convertMe){
@@ -89,6 +94,9 @@ public:
 		return Vector3(convertMe->e[0], convertMe->e[1], convertMe->e[2]);
 	}
 
+	void intersect(Ray& ray){
+		this->tree.intersect(ray);
+	}
 
 
 private:

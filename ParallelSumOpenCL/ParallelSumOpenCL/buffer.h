@@ -5,6 +5,10 @@
 class Buffer
 {
 public:
+	Buffer(){
+
+	}
+
 	Buffer(unsigned int w, unsigned int h)
 	{
 		this->w = w;

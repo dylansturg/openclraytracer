@@ -37,6 +37,18 @@
     <ClInclude Include="BVHNode.h" />
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="comparator.h" />
+    <ClInclude Include="CPURayTracer\RayTracer.h">
+      <Filter>CPURayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="CPURayTracer\Rays\Ray.h">
+      <Filter>CPURayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="CPURayTracer\Rays\RayGenerator.h">
+      <Filter>CPURayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="CPURayTracer\Rays\Hit.h">
+      <Filter>CPURayTracer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lesson1_kernels.cl" />
@@ -54,6 +66,9 @@
   <ItemGroup>
     <Filter Include="kernels">
       <UniqueIdentifier>{e21bb33d-15d6-4c03-8c70-8ef2f014efae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPURayTracer">
+      <UniqueIdentifier>{41a1abeb-5d01-4c44-9b12-b07d621c9a92}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

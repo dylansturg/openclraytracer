@@ -28,7 +28,7 @@ public:
 	BoundingBox(vector<Triangle>* sceneObjects, int startIndex, int endIndex) {
 		int size = endIndex - startIndex;
 		Vector3 maxC, minC;
-		
+
 		maxC = (*sceneObjects)[startIndex].getMaxBoundaries();
 		minC = (*sceneObjects)[startIndex].getMinBoundaries();
 
@@ -57,11 +57,86 @@ public:
 
 	}
 
+	bool intersect(Ray &ray) {
+		Vector3 direction = ray.getDirection();
+		Vector3 origin = ray.getOrigin();
+
+		// parameter values when the ray hits x max plane, x min plane, etc.
+		// tXMax is not guaranteed to be > tXMin, etc.
+		float tXMax, tXMin, tYMax, tYMin, tZMax, tZMin;
+
+		Vector3 invDirs = ray.getInvDir();
+
+		float xRecip = invDirs[0];
+		tXMax = (this->maxBoundaries[0] - origin[0]) * xRecip;
+		tXMin = (this->minBoundaries[0] - origin[0]) * xRecip;
+
+		float yRecip = invDirs[1];
+		tYMax = (this->maxBoundaries[1] - origin[1]) * yRecip;
+		tYMin = (this->minBoundaries[1] - origin[1]) * yRecip;
+
+		float zRecip = invDirs[2];
+		tZMax = (this->maxBoundaries[2] - origin[2]) * zRecip;
+		tZMin = (this->minBoundaries[2] - origin[2]) * zRecip;
+
+		float minXParam = tXMin < tXMax ? tXMin : tXMax;
+		float maxXParam = tXMax > tXMin ? tXMax : tXMin;
+
+		float minYParam = tYMin < tYMax ? tYMin : tYMax;
+		float maxYParam = tYMax > tYMin ? tYMax : tYMin;
+
+		float minZParam = tZMin < tZMax ? tZMin : tZMax;
+		float maxZParam = tZMax > tZMin ? tZMax : tZMin;
+
+		if (tXMax > 0) {
+			if (minYParam < tXMax && maxYParam > tXMax && minZParam < tXMax
+				&& maxZParam > tXMax) {
+				return true;
+			}
+		}
+
+		if (tXMin > 0) {
+			if (minYParam < tXMin && maxYParam > tXMin && minZParam < tXMin
+				&& maxZParam > tXMin) {
+				return true;
+			}
+		}
+
+		if (tYMax > 0) {
+			if (minXParam < tYMax && maxXParam > tYMax && minZParam < tYMax
+				&& maxZParam > tYMax) {
+				return true;
+			}
+		}
+
+		if (tYMin > 0) {
+			if (minXParam < tYMin && maxXParam > tYMin && minZParam < tYMin
+				&& maxZParam > tYMin) {
+				return true;
+			}
+		}
+
+		if (tZMax > 0) {
+			if (minXParam < tZMax && maxXParam > tZMax && minYParam < tZMax
+				&& maxYParam > tZMax) {
+				return true;
+			}
+		}
+
+		if (tZMin > 0) {
+			if (minXParam < tZMin && maxXParam > tZMin && minYParam < tZMin
+				&& maxYParam > tZMin) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	virtual Vector3 getCenter() const {
 		Vector3 min = Vector3(minBoundaries[0], minBoundaries[1], minBoundaries[2]);
 		Vector3 max = Vector3(maxBoundaries[0], maxBoundaries[1], maxBoundaries[2]);
-		
+
 		return (min + max) / 2;
 	}
 

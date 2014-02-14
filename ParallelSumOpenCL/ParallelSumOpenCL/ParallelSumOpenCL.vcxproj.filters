@@ -33,6 +33,10 @@
     <ClInclude Include="IntersectionKernel.h" />
     <ClInclude Include="MaterialColorKernel.h" />
     <ClInclude Include="ClRay.h" />
+    <ClInclude Include="BVHTree.h" />
+    <ClInclude Include="BVHNode.h" />
+    <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="comparator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lesson1_kernels.cl" />

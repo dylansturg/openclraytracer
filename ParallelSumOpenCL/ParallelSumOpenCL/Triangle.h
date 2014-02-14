@@ -30,12 +30,63 @@ public:
 		calculateNormal();
 	}
 
+	Vector3 getMinBoundaries(){
+		float minX =
+			a[0] < b[0] ?
+			(a[0] < c[0] ?
+			a[0] : c[0]) :
+			(b[0] < c[0] ?
+			b[0] : c[0]);
+		float minY =
+			a[1] < b[1] ?
+			(a[1] < c[1] ?
+			a[1] : c[1]) :
+			(b[1] < c[1] ?
+			b[1] : c[1]);
+		float minZ =
+			a[2] < b[2] ?
+			(a[2] < c[2] ?
+			a[2] : c[2]) :
+			(b[2] < c[2] ?
+			b[2] : c[2]);
+		return Vector3(minX, minY, minZ);
+	}
+
+	Vector3 getMaxBoundaries(){
+		float maxX =
+			a[0] > b[0] ?
+			(a[0] > c[0] ?
+			a[0] : c[0]) :
+			(b[0] > c[0] ?
+			b[0] : c[0]);
+		float maxY =
+			a[1] > b[1] ?
+			(a[1] > c[1] ?
+			a[1] : c[1]) :
+			(b[1] > c[1] ?
+			b[1] : c[1]);
+
+		float maxZ =
+			a[2] > b[2] ?
+			(a[2] > c[2] ?
+			a[2] : c[2]) :
+			(b[2] > c[2] ?
+			b[2] : c[2]);
+		return Vector3(maxX, maxY, maxZ);
+	}
+
+	Vector3 getCenter()
+	{
+		return Vector3((a[0] + b[0] + c[0]) / 3, (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3);
+	}
+
 private:
 	cl_float a[3];
 	cl_float b[3];
 	cl_float c[3];
 	cl_float normal[3];
 	cl_int materialIndex;
+	
 
 	void calculateNormal(){
 		Vector3 aTemp;
@@ -53,5 +104,6 @@ private:
 			this->normal[i] = n.c[i];
 		}
 	}
+
 };
 #endif

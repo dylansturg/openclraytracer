@@ -22,7 +22,8 @@
 #include "IntersectionKernel.h"
 #include "MaterialColorKernel.h"
 #include "ClRay.h"
-#define RES 2000
+#include "BVHTree.h"
+#define RES 1000
 
 using namespace std;
 
@@ -31,6 +32,8 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	Scene scene;
+
+	BVHTree tree = BVHTree(scene.shapes);
 
 	/*
 		HitPoint kernel - calculates hitpoints using triangles (3 vertices) and finds a t, position, and index

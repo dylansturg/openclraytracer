@@ -16,15 +16,6 @@ public:
 
 	}
 
-	BoundingBox(Triangle triangle) {
-		Vector3 minBound = triangle.getMinBoundaries();
-		Vector3 maxBound = triangle.getMaxBoundaries();
-		for (int i = 0; i < 3; i++){
-			this->minBoundaries[i] = minBound[i];
-			this->maxBoundaries[i] = maxBound[i];
-		}
-	}
-
 	BoundingBox(vector<Triangle>* sceneObjects, int startIndex, int endIndex) {
 		int size = endIndex - startIndex;
 		Vector3 maxC, minC;
@@ -133,7 +124,7 @@ public:
 	}
 
 
-	virtual Vector3 getCenter() const {
+	Vector3 getCenter() const {
 		Vector3 min = Vector3(minBoundaries[0], minBoundaries[1], minBoundaries[2]);
 		Vector3 max = Vector3(maxBoundaries[0], maxBoundaries[1], maxBoundaries[2]);
 

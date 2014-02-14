@@ -2,7 +2,6 @@
 #define RAY_TRACER_H
 
 #include "Rays/Ray.h"
-#include "Primitives/Sphere.h"
 #include <cmath>
 #include "../simplePPM.h"
 #include "../objLoader.h"
@@ -22,8 +21,9 @@ public:
 		this->colorByNormal = false;
 	}
 
-	RayTracer(bool normColor) {
+	RayTracer(Scene* scene, bool normColor) {
 		this->colorByNormal = false;
+		this->scene = scene;
 	}
 
 	~RayTracer() {
@@ -40,7 +40,7 @@ public:
 	}
 
 	void renderRayDirectionsToImage(char *fileName) {
-		RayGenerator rg = RayGenerator(this->scene.camera,
+		RayGenerator rg = RayGenerator(this->scene->camera,
 				this->frameBuffer.getW(), this->frameBuffer.getH());
 		drawRaysToBuffer(this->frameBuffer, rg);
 		drawFrameBuffer(fileName);
@@ -48,7 +48,7 @@ public:
 
 private:
 	Buffer frameBuffer;
-	Scene scene;
+	Scene* scene;
 	bool colorByNormal;
 
 	void drawRaysToBuffer(Buffer &b, RayGenerator &rg) {
@@ -102,7 +102,7 @@ private:
 		if (recursionDepth >= 10) {
 			return Vector3(0, 0, 0);
 		}
-		this->scene.intersect(ray);
+		this->scene->intersect(ray);
 		Hit hit = ray.getFirstHit();
 		float t = hit.getParam();
 

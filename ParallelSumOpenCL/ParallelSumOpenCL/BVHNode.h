@@ -20,13 +20,13 @@ public:
 	int right;
 	// If it's leaf, then the value is 1.
 	int isLeaf;
-	vector<BVHNode>* nodeList;
+	/*vector<BVHNode>* nodeList;
 	vector<Triangle>* triangles;
-
+*/
 	BVHNode(vector<Triangle> & triangleList, vector<BVHNode>* nodeLists, int left, int right)
 	{
-		this->nodeList = nodeLists;
-		this->triangles = &triangleList;
+		//this->nodeList = nodeLists;
+		//this->triangles = &triangleList;
 		bBox = BoundingBox(&triangleList, left, right);
 		this->isLeaf = 0;
 
@@ -83,17 +83,17 @@ public:
 		{
 			if (!this->isLeaf)
 			{
-				this->nodeList->at(left).intersect(ray);
+				//this->nodeList->at(left).intersect(ray);
 				if (this->right > 0)
 				{
-					this->nodeList->at(right).intersect(ray);
+					//this->nodeList->at(right).intersect(ray);
 				}
 			}
 			else 
 			{
-				this->triangles->at(left).intersect(ray);
+				//this->triangles->at(left).intersect(ray);
 				if (this->right >= 0){
-					this->triangles->at(right).intersect(ray);
+					//this->triangles->at(right).intersect(ray);
 				}
 			}
 		}

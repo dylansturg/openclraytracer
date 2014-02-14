@@ -1,3 +1,8 @@
+#ifndef CL_STRUCTS_H_
+#define CL_STRUCTS_H_
+
+#define MAX_STACK 1500
+    
 typedef struct{
 	float A[3];
 	float B[3];
@@ -42,3 +47,23 @@ typedef struct{
 	float3 direction;
 	float3 inverseDir;
 } Ray;
+
+typedef struct{
+	float minBoundaries[3];
+	float maxBoundaries[3];
+} BoundingBox;
+
+typedef struct{
+	BoundingBox bBox;
+	int left;
+	int right;
+	// If it's leaf, then the value is 1.
+	int isLeaf;
+} Node;
+
+typedef struct{
+    int indices[MAX_STACK];
+    int top;
+} NodeStack;
+
+#endif

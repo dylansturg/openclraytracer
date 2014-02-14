@@ -30,7 +30,7 @@ __kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Mat
 int intersectScene(__global Triangle* triangles, int triangleSize, Ray* ray, HitPoint* hitPoint)
 {
      for(int i=0; i < triangleSize; i++){
-         if(intersect(hitPoint, ray, &triangles[i]) >= 0){
+         if(intersectTriangle(hitPoint, ray, &triangles[i]) >= 0){
           //    return 0;   
          }
     }

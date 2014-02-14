@@ -34,7 +34,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("cornell_box.obj");
+		objData->load("Blue_sphere.obj");
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)
@@ -80,6 +80,7 @@ public:
 		delete objData;
 
 		this->tree = BVHTree(this->shapes);
+		BVHNode node = this->tree.getNodesList()->at(0);
 	}
 
 	cl_float3 convertToVector(obj_vector* convertMe){
@@ -95,7 +96,7 @@ public:
 	}
 
 	void intersect(Ray& ray){
-		this->tree.intersect(ray);
+		this->tree.intersectTree(&ray, this->shapes);
 	}
 
 

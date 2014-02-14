@@ -25,7 +25,7 @@
 #include "BVHTree.h"
 #include "CPURayTracer\RayTracer.h"
 
-#define RES 100
+#define RES 1000
 
 using namespace std;
 
@@ -35,9 +35,9 @@ int main(int argc, char* argv[])
 {
 	Scene scene;
 
-	RayTracer cpuTracer = RayTracer(false);
+	RayTracer cpuTracer = RayTracer(&scene, false);
 	cpuTracer.setFrameBuffer(RES, RES);
-	cpuTracer.renderRayDirectionsToImage("cputracer.ppm");
+	//cpuTracer.renderRayDirectionsToImage("cputracer.ppm");
 
 	vector<BVHNode>* nodes = scene.tree.getNodesList();
 	vector<int> triangleIndices;
@@ -59,6 +59,8 @@ int main(int argc, char* argv[])
 
 		Shading kernel - calculates lighting (ambient, diffuse, specular, and shadows) with color values and lights
 		*/
+
+	
 
 
 	int width = RES;
@@ -120,12 +122,12 @@ int main(int argc, char* argv[])
 	//{
 	//	for (int x = 0; x < RES; x++)
 	//	{
-	//		float a = (outHits[y*width + x].normal[0]) *255.0f;
+	//		float a = (outHits[y*width + x].t / maxt) *255.0f;
 	//		float b = (outHits[y*width + x].normal[1]) *255.0f;
 	//		float d = (outHits[y*width + x].normal[2]) *255.0f;
 
 
-	//		Color c = Color(abs(a), abs(b), abs(d));
+	//		Color c = Color(abs(a), abs(a), abs(a));
 
 	//		buffer.at(x, RES - y - 1) = c;
 	//	}

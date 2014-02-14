@@ -19,9 +19,14 @@ public:
 		ClKernel clKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_GPU, "calculateHitPoints");
 
 		vector<Triangle> triangles = scene.shapes;
+		vector<BVHNode>* nodes = scene.tree.getNodesList();
 
 		cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
 		clKernel.checkErr(err, "creating triangle buffer");
+
+		cl_mem nodesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (nodes->size()) * sizeof(BVHNode), (void *)&(*nodes)[0], &err);
+		clKernel.checkErr(err, "creating nodes buffer");
+
 
 		Camera camera = scene.camera;
 		cl_mem cameraBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (1) * sizeof(Camera), (void *)&camera, &err);
@@ -33,26 +38,35 @@ public:
 
 		int trianglesSize = triangles.size();
 
-		// __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
+		//__kernel void calculateHitPoints(__global Node* nodes, int nodeCount, __global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 
 		/*Step 9: Sets Kernel arguments.*/
-		err = clKernel.setKernelArg(0, sizeof(cl_mem), (void *)&trianglesBuffer);
-		clKernel.checkErr(err, "setting kernel arg 0");
+		int argIndex = 0;
 
-		err = clKernel.setKernelArg(1, sizeof(int), &trianglesSize);
-		clKernel.checkErr(err, "setting kernel arg 1");
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&nodesBuffer);
+		clKernel.checkErr(err,  "setting kernel arg");
+		
+		int nodeCount = nodes->size();
+		err = clKernel.setKernelArg(argIndex++, sizeof(int), &nodeCount);
+		clKernel.checkErr(err, "setting kernel arg");
 
-		err = clKernel.setKernelArg(2, sizeof(cl_mem), (void *)&cameraBuffer);
-		clKernel.checkErr(err, "setting kernel arg 2");
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&trianglesBuffer);
+		clKernel.checkErr(err, "setting kernel arg");
 
-		err = clKernel.setKernelArg(3, sizeof(int), &width);
-		clKernel.checkErr(err, "setting kernel arg 3");
+		err = clKernel.setKernelArg(argIndex++, sizeof(int), &trianglesSize);
+		clKernel.checkErr(err, "setting kernel arg");
 
-		err = clKernel.setKernelArg(4, sizeof(int), &height);
-		clKernel.checkErr(err, "setting kernel arg 4");
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&cameraBuffer);
+		clKernel.checkErr(err, "setting kernel arg");
 
-		err = clKernel.setKernelArg(5, sizeof(cl_mem), (void *)&hitPoints);
-		clKernel.checkErr(err, "setting kernel arg 5");
+		err = clKernel.setKernelArg(argIndex++, sizeof(int), &width);
+		clKernel.checkErr(err, "setting kernel arg");
+
+		err = clKernel.setKernelArg(argIndex++, sizeof(int), &height);
+		clKernel.checkErr(err, "setting kernel arg");
+
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&hitPoints);
+		clKernel.checkErr(err, "setting kernel arg");
 
 
 		/*Step 10: Running the kernel.*/
@@ -66,6 +80,9 @@ public:
 		clKernel.checkErr(err, "reading buffer");
 
 		/*Step 12: Clean the resources.*/
+
+		err = clReleaseMemObject(nodesBuffer);		//Release mem object.
+		clKernel.checkErr(err, "freeing args");
 
 		err = clReleaseMemObject(trianglesBuffer);		//Release mem object.
 		clKernel.checkErr(err, "freeing args");

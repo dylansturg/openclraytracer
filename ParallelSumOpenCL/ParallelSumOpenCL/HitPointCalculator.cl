@@ -3,7 +3,7 @@
 Ray getRay(__global Camera* cam, int x, int y, float w, float h);
 
 
-__kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
+__kernel void calculateHitPoints(__global Node* nodes, int nodeCount, __global Triangle* triangles, int trianglesSize, __global Camera* camera, int width, int height, __global HitPoint* hitPoints)
 {
 
 	int id = get_global_id(0);
@@ -14,11 +14,14 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
     HitPoint hitPoint;
     hitPoint.t = FLT_MAX;
     
-    for(int i = 0; i < trianglesSize; i++){
-        intersect(&hitPoint, &ray, &(triangles[i]));
-    }     
+//    for(int i=0; i < trianglesSize; i++){
+      //  intersectTriangle(&hitPoint, &ray, &triangles[i]);
+    //}
+
+    intersectTree(&hitPoint, &ray, nodes, nodeCount, triangles, trianglesSize);
     
 //    hitPoints[id] = hitPoint;
+
 
 	hitPoints[id].t = hitPoint.t;
 	hitPoints[id].position[0] = hitPoint.position[0];
@@ -30,6 +33,7 @@ __kernel void calculateHitPoints(__global Triangle* triangles, int trianglesSize
 	hitPoints[id].normal[2] = hitPoint.normal[2];
 
 	hitPoints[id].materialId = hitPoint.materialId;
+
 }
 
 Ray getRay(__global Camera* cam, int x, int y, float w, float h)
@@ -46,7 +50,9 @@ Ray getRay(__global Camera* cam, int x, int y, float w, float h)
 
 	ray.direction = (-(h/2) * cam->w + uPos * cam->u + vPos * cam->v);
 
-    normalize(ray.direction);
+    ray.direction = normalize(ray.direction);
+    
+    ray.inverseDir = (1 / ray.direction);
 
 	return ray;
 }

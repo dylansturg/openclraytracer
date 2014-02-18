@@ -30,6 +30,7 @@ public:
 	std::vector<Light> lights;
 	Camera camera;
 	BVHTree tree;
+	Vector3 cameraUp, cameraLookingAt;
 
 	Scene(){
 
@@ -74,6 +75,8 @@ public:
 		Vector3 look = convertToGenVector(objData->vertexList[objData->camera->camera_look_point_index]);
 		Vector3 upVec = convertToGenVector(objData->normalList[objData->camera->camera_up_norm_index]);
 
+		this->cameraLookingAt = look;
+		this->cameraUp = upVec;
 
 		camera = Camera(init, look, upVec);
 

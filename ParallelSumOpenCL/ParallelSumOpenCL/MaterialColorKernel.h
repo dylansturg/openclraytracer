@@ -101,8 +101,17 @@ public:
 		/*Step 12: Clean the resources.*/
 
 		err = clReleaseMemObject(hitPointsBuffer);		//Release mem object.
+		clKernel.checkErr(err, "failed to free buffer");
 		err = clReleaseMemObject(materialsBuffer);
+		clKernel.checkErr(err, "failed to free buffer");
 		err = clReleaseMemObject(colorsBuffer);
+		clKernel.checkErr(err, "failed to free buffer");
+		err = clReleaseMemObject(lightsBuffer);
+		clKernel.checkErr(err, "failed to free buffer");
+		err = clReleaseMemObject(trianglesBuffer);
+		clKernel.checkErr(err, "failed to free buffer");
+		err = clReleaseMemObject(nodesBuffer);
+		clKernel.checkErr(err, "failed to free buffer");
 
 
 		outColors.resize(width*height);

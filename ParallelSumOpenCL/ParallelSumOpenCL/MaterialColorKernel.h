@@ -86,12 +86,15 @@ public:
 		err = clKernel.setKernelArg(argIndex++, sizeof(float), (void *)&origin[2]);
 		clKernel.checkErr(err, "setting kernel arg 3");
 
-
+		cl_event kernelEvent;
 
 		/*Step 10: Running the kernel.*/
 		size_t global_work_size[1] = { width*height };
-		err = clKernel.runKernel(1, global_work_size, NULL, 0, NULL, NULL);
+		err = clKernel.runKernel(1, global_work_size, NULL, 0, NULL, &kernelEvent);
 		clKernel.checkErr(err, "starting the kernel");
+
+		err = clWaitForEvents(1, &kernelEvent);
+		clKernel.checkErr(err, "kernel execution");
 
 		/*Step 11: Read the cout put back to host memory.*/
 		

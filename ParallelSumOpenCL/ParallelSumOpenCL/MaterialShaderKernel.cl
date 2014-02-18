@@ -43,10 +43,12 @@ float3 calculateLighting(__global Material* hitMaterial, __global Light* light, 
     lightRay.origin = hit + n*0.01f;
     lightRay.direction = lightPos - lightRay.origin;
     lightRay.direction = normalize(lightRay.direction);
+    lightRay.inverseDir = 1 / lightRay.direction;
     
     HitPoint hitPoint;
     hitPoint.t = FLT_MAX;
     hitPoint.materialId = -1;
+    
     
     intersectTree(&hitPoint, &lightRay, nodes, nodeCount, triangles, triangleSize);
     if( hitPoint.t < (FLT_MAX - 1.0f)){

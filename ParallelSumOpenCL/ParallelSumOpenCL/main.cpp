@@ -25,7 +25,7 @@
 #include "BVHTree.h"
 #include "CPURayTracer\RayTracer.h"
 
-#define RES 2000
+#define RES 500
 
 using namespace std;
 
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 	//	}
 	//}
 
-	simplePPM_write_ppm("ray_amb2.ppm", RES, RES, (unsigned char *)&buffer.at(0, 0));
+	simplePPM_write_ppm("ray_amb_lim2_sphere.ppm", RES, RES, (unsigned char *)&buffer.at(0, 0));
 
 	return SUCCESS;
 }

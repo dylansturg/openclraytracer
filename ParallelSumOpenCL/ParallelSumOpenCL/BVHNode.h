@@ -64,6 +64,10 @@ public:
 
 	}
 
+	BVHNode(){
+
+	}
+
 	int findBoundary(vector<Triangle> *surfaces, int start, int end, int axis,
 		float midValue)
 	{

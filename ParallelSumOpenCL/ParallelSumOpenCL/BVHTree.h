@@ -46,6 +46,10 @@ public:
 
 	}
 
+	BVHTree(vector<BVHNode>* nodes){
+		this->nodesList = nodes;
+	}
+
 	vector<BVHNode>* getNodesList(){
 		return this->nodesList;
 	}

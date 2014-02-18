@@ -27,7 +27,7 @@
 #include "CPURayTracer\RayTracer.h"
 
 #define RES 1000
-#define FRAME_COUNT 100
+#define FRAME_COUNT 1
 
 using namespace std;
 
@@ -35,27 +35,40 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	Scene scene;
+	string extension = "_falcon.bi";;
+	string triangleFile = "trianglesBinary", materialsFile = "materialsBinary", lightsFile = "lightsBinary", treeFile = "treeBinary", cameraFile = "camBinary";
+
+	Scene parsedScene;
+	parsedScene.SceneToBinFiles(triangleFile + extension, materialsFile + extension, lightsFile + extension, treeFile + extension, cameraFile + extension);
+
+
 	long runTImes[FRAME_COUNT];
+
+	
+
+	Scene scene(triangleFile+extension, materialsFile+extension, lightsFile+extension, treeFile+extension, cameraFile+extension);
 
 	int width = RES;
 	int height = RES;
 
+	vector<Vector3> outColors;
+	vector<HitPoint> outHits;
+	vector<ClRay> outRays;
+
 	for (int i = 0; i < FRAME_COUNT; i++){
 		long startTime = GetTickCount64();
 
-		vector<HitPoint> outHits;
-		vector<ClRay> outRays;
+		
 		IntersectionKernel intersections(width, height, scene, outHits, outRays);
 
 
-		vector<Vector3> outColors;
-		MaterialColorKernel materialColors(width, height, scene, outHits, outColors);
+		
+		//MaterialColorKernel materialColors(width, height, scene, outHits, outColors);
 
 		Buffer buffer = Buffer(RES, RES);
 
 		float maxt = 0;
-		for (int i = 0; i < width*height; i++){
+	/*	for (int i = 0; i < width*height; i++){
 			for (int j = 0; j < 3; j++){
 				if (outColors[i][j] < (FLT_MAX - 1.0f)){
 					if (outColors[i][j] > maxt){
@@ -81,34 +94,34 @@ int main(int argc, char* argv[])
 
 				buffer.at(x, RES - y - 1) = c;
 			}
+		}*/
+
+		for (int i = 0; i < width*height; i++){
+			if (outHits[i].t < (FLT_MAX - 1.0f)){
+				if (outHits[i].t > maxt){
+					maxt = outHits[i].t;
+				}
+			}
+			else {
+				outHits[i].t = 0;
+			}
+
 		}
 
-		//for (int i = 0; i < width*height; i++){
-		//	if (outHits[i].t < (FLT_MAX - 1.0f)){
-		//		if (outHits[i].t > maxt){
-		//			maxt = outHits[i].t;
-		//		}
-		//	}
-		//	else {
-		//		outHits[i].t = 0;
-		//	}
-
-		//}
-
-		//for (int y = 0; y < RES; y++)
-		//{
-		//	for (int x = 0; x < RES; x++)
-		//	{
-		//		float a = (outHits[y*width + x].t / maxt) *255.0f;
-		//		float b = (outHits[y*width + x].normal[1]) *255.0f;
-		//		float d = (outHits[y*width + x].normal[2]) *255.0f;
+		for (int y = 0; y < RES; y++)
+		{
+			for (int x = 0; x < RES; x++)
+			{
+				float a = (outHits[y*width + x].t / maxt) *255.0f;
+				float b = (outHits[y*width + x].normal[1]) *255.0f;
+				float d = (outHits[y*width + x].normal[2]) *255.0f;
 
 
-		//		Color c = Color(abs(a), abs(a), abs(a));
+				Color c = Color(abs(a), abs(a), abs(a));
 
-		//		buffer.at(x, RES - y - 1) = c;
-		//	}
-		//}
+				buffer.at(x, RES - y - 1) = c;
+			}
+		}
 
 		char filename[100];
 		sprintf_s(filename, "ray_tracer_%d.ppm", i);

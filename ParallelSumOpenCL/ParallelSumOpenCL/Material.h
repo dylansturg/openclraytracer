@@ -8,6 +8,10 @@
 class Material
 {
 public:
+	Material(){
+		
+	}
+
 	Material(obj_material * mat)
 	{
 		for (int i = 0; i < 3; i++)

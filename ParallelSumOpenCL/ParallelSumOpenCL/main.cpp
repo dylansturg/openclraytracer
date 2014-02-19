@@ -63,12 +63,12 @@ int main(int argc, char* argv[])
 
 
 		
-		//MaterialColorKernel materialColors(width, height, scene, outHits, outColors);
+		MaterialColorKernel materialColors(width, height, scene, outHits, outColors);
 
 		Buffer buffer = Buffer(RES, RES);
 
 		float maxt = 0;
-	/*	for (int i = 0; i < width*height; i++){
+		for (int i = 0; i < width*height; i++){
 			for (int j = 0; j < 3; j++){
 				if (outColors[i][j] < (FLT_MAX - 1.0f)){
 					if (outColors[i][j] > maxt){
@@ -94,34 +94,34 @@ int main(int argc, char* argv[])
 
 				buffer.at(x, RES - y - 1) = c;
 			}
-		}*/
-
-		for (int i = 0; i < width*height; i++){
-			if (outHits[i].t < (FLT_MAX - 1.0f)){
-				if (outHits[i].t > maxt){
-					maxt = outHits[i].t;
-				}
-			}
-			else {
-				outHits[i].t = 0;
-			}
-
 		}
 
-		for (int y = 0; y < RES; y++)
-		{
-			for (int x = 0; x < RES; x++)
-			{
-				float a = (outHits[y*width + x].t / maxt) *255.0f;
-				float b = (outHits[y*width + x].normal[1]) *255.0f;
-				float d = (outHits[y*width + x].normal[2]) *255.0f;
+		//for (int i = 0; i < width*height; i++){
+		//	if (outHits[i].t < (FLT_MAX - 1.0f)){
+		//		if (outHits[i].t > maxt){
+		//			maxt = outHits[i].t;
+		//		}
+		//	}
+		//	else {
+		//		outHits[i].t = 0;
+		//	}
+
+		//}
+
+		//for (int y = 0; y < RES; y++)
+		//{
+		//	for (int x = 0; x < RES; x++)
+		//	{
+		//		float a = (outHits[y*width + x].t / maxt) *255.0f;
+		//		float b = (outHits[y*width + x].normal[1]) *255.0f;
+		//		float d = (outHits[y*width + x].normal[2]) *255.0f;
 
 
-				Color c = Color(abs(a), abs(a), abs(a));
+		//		Color c = Color(abs(a), abs(a), abs(a));
 
-				buffer.at(x, RES - y - 1) = c;
-			}
-		}
+		//		buffer.at(x, RES - y - 1) = c;
+		//	}
+		//}
 
 		char filename[100];
 		sprintf_s(filename, "ray_tracer_%d.ppm", i);

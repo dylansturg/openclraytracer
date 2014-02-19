@@ -93,7 +93,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("Falcon_blendswap.obj");
+		objData->load("cornell_box.obj");
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)

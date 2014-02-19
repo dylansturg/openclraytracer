@@ -4,9 +4,16 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <Windows.h>
 
 
 using namespace std;
+
+void __stdcall contextErrorCallback(const char *errinfo, const void *private_info, size_t cb, void *user_data)
+{
+	fprintf(stderr, errinfo);
+}
+
 
 class ClKernel{
 public:
@@ -65,7 +72,7 @@ public:
 		checkErr(status, "Failed to obtain target devices.");
 
 		/*Step 3: Create context.*/
-		clContext = clCreateContext(NULL,1, devices,NULL,NULL,&err);
+		clContext = clCreateContext(NULL, 1, devices, contextErrorCallback, NULL, &err);
 		checkErr(err, "Failed to create context");
 
 		/*Step 4: Creating command queue associate with the context.*/
@@ -108,12 +115,13 @@ public:
 	}
 
 	int runKernel(cl_uint work_dim,
+		const size_t * global_work_offset,
 		const size_t *global_work_size,
 		const size_t *local_work_size = NULL,
 		cl_uint num_events_in_wait_list = 0,
 		const cl_event *event_wait_list = NULL,
 		cl_event *event = NULL){
-			return clEnqueueNDRangeKernel(this->clCommandQueue, this->clKernel, work_dim, NULL, global_work_size, local_work_size, num_events_in_wait_list, event_wait_list, event);
+			return clEnqueueNDRangeKernel(this->clCommandQueue, this->clKernel, work_dim, global_work_offset, global_work_size, local_work_size, num_events_in_wait_list, event_wait_list, event);
 	}
 
 	int readBuffer(cl_mem buffer,

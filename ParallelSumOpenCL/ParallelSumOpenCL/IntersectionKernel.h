@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAX_CONCURRENT_KERNELS 10000
+
 #include "ClKernel.h"
 #include <vector>
 #include "Camera.h"
@@ -70,14 +72,17 @@ public:
 
 		cl_event kernelEvent;
 
-		size_t global_work_size[1] = { width*height };
-		err = clKernel.runKernel(1, global_work_size, NULL, 0, NULL, &kernelEvent);
-		clKernel.checkErr(err, "starting the kernel");
+		int requiredKernelExecutions = width*height;
+		for (int i = 0; i < requiredKernelExecutions; i += MAX_CONCURRENT_KERNELS){
+			size_t global_work_size = MAX_CONCURRENT_KERNELS;
+			size_t offset = i;
+			err = clKernel.runKernel(1, &offset, &global_work_size, NULL, 0, NULL, &kernelEvent);
+			clKernel.checkErr(err, "starting the kernel");
 
-		err = clWaitForEvents(1, &kernelEvent);
-		clKernel.checkErr(err, "kernel execution");
+			err = clWaitForEvents(1, &kernelEvent);
+			clKernel.checkErr(err, "kernel execution");
 
-
+		}
 		/*Step 11: Read the cout put back to host memory.*/
 		outHits.resize(width*height);
 		err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height * sizeof(HitPoint), (void*)&outHits[0], 0, NULL, NULL);

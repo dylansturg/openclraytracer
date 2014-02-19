@@ -85,6 +85,10 @@ public:
 
 		fstream cameraBinary(binaryCameraFile, ios::in | ios::binary);
 		cameraBinary.read((char*)&(this->camera), sizeof(Camera));
+
+		cameraBinary.read((char*)&(this->cameraLookingAt), sizeof(Vector3));
+		cameraBinary.read((char*)&(this->cameraUp), sizeof(Vector3));
+
 		cameraBinary.close();
 
 
@@ -118,6 +122,18 @@ public:
 			obj_material *m = objData->materialList[i];
 			Material tempMaterial = Material(m);
 			materials.push_back(m);
+		}
+
+		if (this->materials.size() == 0)
+		{
+			this->materials.push_back(Material());
+
+			// make all the triangles use the default instead...
+			for (int i = 0; i < this->shapes.size(); i++)
+			{
+				if (this->shapes[i].materialIndex < 0)
+					this->shapes[i].materialIndex = 0;
+			}
 		}
 
 		//create lights
@@ -191,6 +207,8 @@ public:
 
 		fstream cameraOut(binaryCameraFile, ios::binary | ios::out);
 		cameraOut.write((char*)&(this->camera), sizeof(Camera));
+		cameraOut.write((char*)&(this->cameraLookingAt), sizeof(Vector3));
+		cameraOut.write((char*)&(this->cameraUp), sizeof(Vector3));
 		cameraOut.close();
 
 		return;

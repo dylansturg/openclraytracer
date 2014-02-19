@@ -19,6 +19,12 @@
 
 class Triangle{
 public:
+	cl_float a[3];
+	cl_float b[3];
+	cl_float c[3];
+	cl_float normal[3];
+	cl_int materialIndex;
+
 	Triangle(){}
 
 	Triangle(cl_float3 a, cl_float3 b, cl_float3 c, cl_int materialIndex, cl_float3 normal){
@@ -154,12 +160,6 @@ public:
 	}
 
 private:
-	cl_float a[3];
-	cl_float b[3];
-	cl_float c[3];
-	cl_float normal[3];
-	cl_int materialIndex;
-
 
 	void calculateNormal(){
 		Vector3 aTemp;

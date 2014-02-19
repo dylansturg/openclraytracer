@@ -8,8 +8,19 @@
 class Material
 {
 public:
-	Material(){
-		
+	Material()
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			this->ambient[i] = 0.5;
+			this->diffuse[i] = 0.5;
+			this->specular[i] = 0.5;
+		}
+
+		this->shiny = 1.0f;
+		this->reflect = 0.0f;
+		this->transparency = 0.0f;
+		this->glossy = 0.0f;
 	}
 
 	Material(obj_material * mat)

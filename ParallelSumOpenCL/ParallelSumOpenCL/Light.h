@@ -31,6 +31,10 @@ public:
 		return this->materialID;
 	}
 
+	void setMaterialID(cl_int id){
+		this->materialID = id;
+	}
+
 private:
 	cl_float lightPosition[3];
 	cl_int materialID;

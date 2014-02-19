@@ -7,6 +7,7 @@ __kernel void calculateHitPoints(__global Node* nodes, int nodeCount, __global T
 {
 
 	int id = get_global_id(0);
+
 	int x = id % width;
 	int y = id / width;
 	Ray ray = getRay(camera, x, y, (float) width, (float) height);
@@ -21,12 +22,14 @@ __kernel void calculateHitPoints(__global Node* nodes, int nodeCount, __global T
 	hitPoints[id].position[1] = hitPoint.position[1];
 	hitPoints[id].position[2] = hitPoint.position[2];
 
+
 	hitPoints[id].normal[0] = hitPoint.normal[0];
 	hitPoints[id].normal[1] = hitPoint.normal[1];
 	hitPoints[id].normal[2] = hitPoint.normal[2];
 
 	hitPoints[id].materialId = hitPoint.materialId;
 
+	return;
 }
 
 Ray getRay(__global Camera* cam, int x, int y, float w, float h)

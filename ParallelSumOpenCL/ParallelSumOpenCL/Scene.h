@@ -97,7 +97,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("cornell_box.obj");
+		objData->load("dragon.obj");
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)
@@ -124,6 +124,15 @@ public:
 			materials.push_back(m);
 		}
 
+
+
+		//create lights
+		for (int i = 0; i<objData->lightPointCount; i++)
+		{
+			obj_light_point *o = objData->lightPointList[i];
+			lights.push_back(Light(convertToVector(objData->vertexList[o->pos_index]), o->material_index));
+		}
+
 		if (this->materials.size() == 0)
 		{
 			this->materials.push_back(Material());
@@ -134,13 +143,13 @@ public:
 				if (this->shapes[i].materialIndex < 0)
 					this->shapes[i].materialIndex = 0;
 			}
-		}
 
-		//create lights
-		for (int i = 0; i<objData->lightPointCount; i++)
-		{
-			obj_light_point *o = objData->lightPointList[i];
-			lights.push_back(Light(convertToVector(objData->vertexList[o->pos_index]), o->material_index));
+			for (int i = 0; i < this->lights.size(); i++)
+			{
+				if (this->lights[i].getMaterialID() < 0){
+					this->lights[i].setMaterialID(0);
+				}
+			}
 		}
 
 

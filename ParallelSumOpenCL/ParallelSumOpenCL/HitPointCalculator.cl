@@ -14,14 +14,7 @@ __kernel void calculateHitPoints(__global Node* nodes, int nodeCount, __global T
     HitPoint hitPoint;
     hitPoint.t = FLT_MAX;
     
-//    for(int i=0; i < trianglesSize; i++){
-      //  intersectTriangle(&hitPoint, &ray, &triangles[i]);
-    //}
-
     intersectTree(&hitPoint, &ray, nodes, nodeCount, triangles, trianglesSize);
-    
-//    hitPoints[id] = hitPoint;
-
 
 	hitPoints[id].t = hitPoint.t;
 	hitPoints[id].position[0] = hitPoint.position[0];

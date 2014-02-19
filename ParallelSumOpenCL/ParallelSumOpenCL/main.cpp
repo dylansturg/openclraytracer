@@ -26,8 +26,8 @@
 #include "BVHTree.h"
 #include "CPURayTracer\RayTracer.h"
 
-#define RES 1000
-#define FRAME_COUNT 1
+#define RES 2048
+#define FRAME_COUNT 5
 
 using namespace std;
 
@@ -35,16 +35,14 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	string extension = "_dragon.bi";;
+	string extension = ".bi";;
 	string triangleFile = "trianglesBinary", materialsFile = "materialsBinary", lightsFile = "lightsBinary", treeFile = "treeBinary", cameraFile = "camBinary";
 
-	//Scene parsedScene;
-	//parsedScene.SceneToBinFiles(triangleFile + extension, materialsFile + extension, lightsFile + extension, treeFile + extension, cameraFile + extension);
+	Scene parsedScene;
+	parsedScene.SceneToBinFiles(triangleFile + extension, materialsFile + extension, lightsFile + extension, treeFile + extension, cameraFile + extension);
 
 
 	long runTImes[FRAME_COUNT];
-
-	
 
 	Scene scene(triangleFile+extension, materialsFile+extension, lightsFile+extension, treeFile+extension, cameraFile+extension);
 
@@ -55,7 +53,7 @@ int main(int argc, char* argv[])
 	vector<HitPoint> outHits;
 	vector<ClRay> outRays;
 
-	for (int i = 0; i < FRAME_COUNT; i++){
+	for (int frame = 0; frame < FRAME_COUNT; frame++){
 		long startTime = GetTickCount64();
 
 		
@@ -125,14 +123,14 @@ int main(int argc, char* argv[])
 		//}
 
 		char filename[100];
-		sprintf_s(filename, "ray_tracer_%d.ppm", i);
+		sprintf_s(filename, "ray_tracer_%d.ppm", frame);
 
 		simplePPM_write_ppm(filename, RES, RES, (unsigned char *)&buffer.at(0, 0));
-		Vector3 newPos = Vector3(scene.camera.Pos.s[0], scene.camera.Pos.s[1], scene.camera.Pos.s[2]);
-		newPos += Vector3(cos(i*2*3.14/FRAME_COUNT), 0, sin(i*2*3.14/FRAME_COUNT));
-		scene.camera = Camera(newPos, scene.cameraLookingAt, scene.cameraUp);
+		//Vector3 newPos = Vector3(scene.camera.Pos.s[0], scene.camera.Pos.s[1], scene.camera.Pos.s[2]);
+		//newPos += Vector3(cos(i*2*3.14/FRAME_COUNT), 0, sin(i*2*3.14/FRAME_COUNT));
+		//scene.camera = Camera(newPos, scene.cameraLookingAt, scene.cameraUp);
 
-		runTImes[i] = GetTickCount64() - startTime;
+		runTImes[frame] = GetTickCount64() - startTime;
 	}
 
 	long sum = 0;
@@ -144,7 +142,6 @@ int main(int argc, char* argv[])
 	}
 
 	cout << "Average: " << (sum / FRAME_COUNT) << endl;
-
 	return SUCCESS;
 }
 

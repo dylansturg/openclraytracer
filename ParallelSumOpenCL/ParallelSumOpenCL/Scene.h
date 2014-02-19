@@ -97,7 +97,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("dragon.obj");
+		objData->load("Blue_sphere.obj");
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)

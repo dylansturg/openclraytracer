@@ -10,14 +10,17 @@
 
 using namespace std;
 
+extern long kernelTimer;
+extern long dataUploadTime;
+
 class MaterialColorKernel{
 public:
 	ClKernel clKernel;
-	cl_mem hitPointsBuffer, trianglesBuffer, nodesBuffer, materialsBuffer, lightsBuffer, colorsBuffer, cameraBuffer;
+	cl_mem  trianglesBuffer, nodesBuffer, materialsBuffer, lightsBuffer, colorsBuffer, cameraBuffer;
 
-	MaterialColorKernel(int width, int height, Scene& scene){
+	MaterialColorKernel(int width, int height, Scene& scene, ContextWrapper & context){
 		cl_int err;
-		this->clKernel = ClKernel("MaterialShaderKernel.cl", CL_DEVICE_TYPE_GPU, "calculateMaterialColors");
+		this->clKernel = ClKernel("MaterialShaderKernel.cl", "calculateMaterialColors", context);
 
 		vector<Material> materials = scene.materials;
 		vector<Light> lights = scene.lights;
@@ -80,8 +83,6 @@ public:
 	~MaterialColorKernel(){
 		/*Step 12: Clean the resources.*/
 		cl_int err;
-		err = clReleaseMemObject(hitPointsBuffer);		//Release mem object.
-		clKernel.checkErr(err, "failed to free buffer");
 		err = clReleaseMemObject(materialsBuffer);
 		clKernel.checkErr(err, "failed to free buffer");
 		err = clReleaseMemObject(colorsBuffer);
@@ -94,19 +95,21 @@ public:
 		clKernel.checkErr(err, "failed to free buffer");
 	}
 
-	bool invokeKernel(int width, int height, vector<HitPoint>& hitPoints, vector<Vector3> & outColors, Camera* sceneCam = NULL)
+	bool invokeKernel(int width, int height, cl_mem hitPointsBuffer, vector<Vector3> & outColors, Camera* sceneCam = NULL)
 	{
 		cl_event kernelEvent;
 		cl_int err;
+		cl_mem hitpoints = hitPointsBuffer;
 
-		vector<float> kernelColors;
-		kernelColors.resize(width*height * 3);
+		long startTime = GetTickCount64();
 
-		hitPointsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (hitPoints.size()) * sizeof(HitPoint), (void *)&hitPoints[0], &err);
-		clKernel.checkErr(err, "creating hit points buffer");
+		//hitPointsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (hitPoints.size()) * sizeof(HitPoint), (void *)&hitPoints[0], &err);
+		//clKernel.checkErr(err, "creating hit points buffer");
 
-		err = clKernel.setKernelArg(0, sizeof(cl_mem), (void *)&hitPointsBuffer);
+		err = clKernel.setKernelArg(0, sizeof(cl_mem), (void *)&hitpoints);
 		clKernel.checkErr(err, "setting kernel arg 0");
+
+		//dataUploadTime += GetTickCount64() - startTime;
 
 		int requiredKernelExecutions = width*height;
 		int i = 0;
@@ -118,14 +121,12 @@ public:
 		err = clWaitForEvents(1, &kernelEvent);
 		clKernel.checkErr(err, "kernel execution");
 
-		err = clKernel.readBuffer(colorsBuffer, CL_TRUE, 0, width*height * 3 * sizeof(float), (void*)&kernelColors[0], 0, NULL, NULL);
+		outColors.resize(width*height);
+		err = clKernel.readBuffer(colorsBuffer, CL_TRUE, 0, width*height * 3 * sizeof(float), (void*)&outColors[0], 0, NULL, NULL);
 		clKernel.checkErr(err, "starting the read buffer");
 
+		kernelTimer += GetTickCount64() - startTime;
 
-		outColors.resize(width*height);
-		for (int i = 0; i < width*height; i++){
-			outColors[i] = Vector3(kernelColors[3 * i + 0], kernelColors[3 * i + 1], kernelColors[3 * i + 2]);
-		}
 		return true;
 	}
 

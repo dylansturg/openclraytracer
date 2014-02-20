@@ -74,7 +74,7 @@ int CStyleHelloWorld()
 {
 	cl_int err;
 	string hw("Hello World!");
-	ClKernel clKernel("HelloWorld_Kernel.cl", CL_DEVICE_TYPE_CPU, "helloworld");
+	ClKernel clKernel("HelloWorld_Kernel.cl", "helloworld", (ContextWrapper)NULL);
 
 
 	cl_mem inputBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY|CL_MEM_COPY_HOST_PTR, (hw.size() + 1) * sizeof(char),(void *) hw.c_str(), &err);

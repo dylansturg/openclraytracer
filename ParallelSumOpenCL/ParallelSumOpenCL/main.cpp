@@ -25,9 +25,10 @@
 #include "ClRay.h"
 #include "BVHTree.h"
 #include "CPURayTracer\RayTracer.h"
+#include "ContextWrapper.h"
 
-#define RES 2048
-#define FRAME_COUNT 5
+#define RES 512
+#define FRAME_COUNT 25
 
 using namespace std;
 
@@ -42,6 +43,8 @@ int main(int argc, char* argv[])
 	kernelTimer = 0;
 	readTimer = 0;
 	overHeadTimer = 0;
+
+
 	string extension = "_dragon.bi";;
 	string triangleFile = "trianglesBinary", materialsFile = "materialsBinary", lightsFile = "lightsBinary", treeFile = "treeBinary", cameraFile = "camBinary";
 
@@ -51,6 +54,7 @@ int main(int argc, char* argv[])
 
 	long runTImes[FRAME_COUNT];
 	long kernelTimes[FRAME_COUNT];
+	long intersectionTimes[FRAME_COUNT];
 
 	Scene scene(triangleFile+extension, materialsFile+extension, lightsFile+extension, treeFile+extension, cameraFile+extension);
 
@@ -60,8 +64,10 @@ int main(int argc, char* argv[])
 	vector<Vector3> outColors;
 	vector<HitPoint> outHits;
 
-	IntersectionKernel intersections(width, height, scene);
-	MaterialColorKernel materialColors(width, height, scene);
+	ContextWrapper context(CL_DEVICE_TYPE_GPU);
+
+	IntersectionKernel intersections(width, height, scene, context);
+	MaterialColorKernel materialColors(width, height, scene, context);
 
 	int triangleCount = scene.shapes.size();
 	int nodesCount = scene.tree.getNodesList()->size();
@@ -72,8 +78,9 @@ int main(int argc, char* argv[])
 		
 		intersections.invokeKernel(width, height, outHits);
 
+		intersectionTimes[frame] = GetTickCount64() - startTime;
 
-		materialColors.invokeKernel(width, height, outHits, outColors);
+		materialColors.invokeKernel(width, height, intersections.hitPointsBuffer, outColors);
 		
 
 		kernelTimes[frame] = GetTickCount64() - startTime;
@@ -152,11 +159,14 @@ int main(int argc, char* argv[])
 
 	for (int i = 0; i < FRAME_COUNT; i++)
 	{
-		cout << "Run time " << i << ": " << runTImes[i] <<  " K time " << kernelTimes[i] << endl;
+		cout << "Run time " << i << ": " << runTImes[i] <<  " K time " << kernelTimes[i] << " I time " << intersectionTimes[i] << endl;
 		sum += runTImes[i];
 	}
 
 	cout << "Average: " << (sum / FRAME_COUNT) << endl;
+
+	clReleaseContext(context.context);
+
 	return SUCCESS;
 }
 

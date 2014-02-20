@@ -6,26 +6,21 @@
 #include <fstream>
 #include <Windows.h>
 
+#include "ContextWrapper.h"
+
 
 using namespace std;
-
-void __stdcall contextErrorCallback(const char *errinfo, const void *private_info, size_t cb, void *user_data)
-{
-	fprintf(stderr, errinfo);
-}
-
 
 class ClKernel{
 public:
 	ClKernel()
 	{
-		this->clContext = (cl_context)NULL;
 		this->clCommandQueue = (cl_command_queue)NULL;
 		this->clKernel = (cl_kernel)NULL;
 		this->clProgram = (cl_program)NULL;
 	}
 
-	ClKernel(string sourceFileName, long deviceType, string kernelFuncName)
+	ClKernel(string sourceFileName, string kernelFuncName, ContextWrapper context)
 	{
 		string programSource;
 		if(convertToString(sourceFileName, programSource)){
@@ -33,84 +28,39 @@ public:
 		}
 
 		cl_int err;
-
-		cl_uint numPlatforms;	//the NO. of platforms
-		cl_platform_id platform = NULL;	//the chosen platform
-		cl_int	status = clGetPlatformIDs(0, NULL, &numPlatforms);
-		checkErr(status, "clGetPlatformIDs - count");
-
-		/*For clarity, choose the first available platform. */
-		cl_platform_id* platforms;
-		if(numPlatforms > 0)
-		{
-			platforms = (cl_platform_id* )malloc(numPlatforms* sizeof(cl_platform_id));
-			status = clGetPlatformIDs(numPlatforms, platforms, NULL);
-			checkErr(status, "clGetPlatformIDs");
-		} else {
-			cerr << "Error requesting platforms.  None Available.  That's bad" << endl;
-			return;
-		}
-
-		/*Step 2:Query the platform and choose the first GPU device if has one.Otherwise use the CPU as device.*/
-
-		cl_uint numTargetDevices = 0;
-		platform = NULL;
-		for(int i=0; i < numPlatforms; i++){
-
-			status = clGetDeviceIDs(platforms[i], deviceType, 0, NULL, &numTargetDevices);
-			if(numTargetDevices > 0){
-				platform = platforms[i];
-				free(platforms);
-				break; // found a valid platform
-			}
-		}
-
-		if(platform == NULL){
-			cerr << "No devices found for available platforms for device type." << endl;
-			return;
-		}
-
-		cl_device_id* devices = (cl_device_id*)malloc(numTargetDevices*sizeof(cl_device_id));
-		status = clGetDeviceIDs(platform, deviceType, numTargetDevices, devices, NULL);
-		checkErr(status, "Failed to obtain target devices.");
-
-		/*Step 3: Create context.*/
-		clContext = clCreateContext(NULL, 1, devices, contextErrorCallback, NULL, &err);
-		checkErr(err, "Failed to create context");
-
+		this->clContext = context;
 		/*Step 4: Creating command queue associate with the context.*/
-		clCommandQueue = clCreateCommandQueue(clContext, devices[0], 0, &err);
+		clCommandQueue = clCreateCommandQueue(context.context, context.device, 0, &err);
 		checkErr(err, "Failed to create command queue");
 
 		/*Step 5: Create program object */
 		size_t sourceSize[] = {programSource.size()};
 		const char* source = programSource.c_str();
-		this->clProgram = clCreateProgramWithSource(clContext, 1, &source, sourceSize, &err);
+		this->clProgram = clCreateProgramWithSource(context.context, 1, &source, sourceSize, &err);
 		checkErr(err, "Failed to create program");
 
 		/*Step 6: Build program. */
-		status=clBuildProgram(this->clProgram, 1,devices,NULL,NULL,NULL);
-		if (status != CL_SUCCESS)
+		err=clBuildProgram(this->clProgram, 1,&(context.device),"-cl-fast-relaxed-math",NULL,NULL);
+		if (err != CL_SUCCESS)
 		{
 			cout << "Program Build failed\n";
 			size_t length;
 			char buffer[2048];
-			clGetProgramBuildInfo(this->clProgram, devices[0], CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &length);
+			clGetProgramBuildInfo(this->clProgram, context.device, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &length);
 			cout << "--- Build log ---\n " << buffer << endl;
 		}
-		checkErr(status, "Build program failure");
+		checkErr(err, "Build program failure");
 
 		this->clKernel = clCreateKernel(this->clProgram,kernelFuncName.c_str(), &err);
-
-		free(devices);
 
 	}
 
 	~ClKernel(){
-		if (this->clContext != NULL){
+		if (this->clProgram != NULL){
 			clReleaseKernel(this->clKernel);
+			clFinish(this->clCommandQueue);
 			clReleaseCommandQueue(this->clCommandQueue);
-			clReleaseContext(this->clContext);
+			//clReleaseContext(this->clContext);
 			clReleaseProgram(this->clProgram);
 		}
 	}
@@ -120,10 +70,9 @@ public:
 		if (this == &kernel)
 			return *this;
 
-		if (this->clContext != NULL){
+		if (this->clKernel != NULL){
 			clReleaseKernel(this->clKernel);
 			clReleaseCommandQueue(this->clCommandQueue);
-			clReleaseContext(this->clContext);
 			clReleaseProgram(this->clProgram);
 		}
 
@@ -132,7 +81,7 @@ public:
 		this->clKernel = kernel.clKernel;
 		this->clProgram = kernel.clProgram;
 
-		if (kernel.clContext != NULL){
+		if (kernel.clKernel != NULL){
 			kernel.setClNull();
 		}
 
@@ -171,10 +120,10 @@ public:
 		void *host_ptr,
 		cl_int *errcode_ret)
 	{
-		return clCreateBuffer(this->clContext, flags, size, host_ptr, errcode_ret);
+		return clCreateBuffer(this->clContext.context, flags, size, host_ptr, errcode_ret);
 	}
 
-	void checkErr(cl_int err, const char* name){
+	void static checkErr(cl_int err, const char* name){
 		if (err != CL_SUCCESS){
 			std::cerr << "ERROR: " << name << " (" << err << ")" << std::endl;
 			while (1);
@@ -183,14 +132,15 @@ public:
 
 private:
 	cl_kernel clKernel;
-	cl_context clContext;
+	ContextWrapper clContext;
 	cl_command_queue clCommandQueue;
 	cl_program clProgram;
+
+
 
 	void setClNull()
 	{
 		this->clCommandQueue = NULL;
-		this->clContext = NULL;
 		this->clKernel = NULL;
 		this->clProgram = NULL;
 	}

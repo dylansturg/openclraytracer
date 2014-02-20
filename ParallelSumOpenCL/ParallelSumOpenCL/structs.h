@@ -1,7 +1,7 @@
 #ifndef CL_STRUCTS_H_
 #define CL_STRUCTS_H_
 
-#define MAX_STACK 15000000
+#define MAX_STACK 1500
     
 typedef struct{
 	float A[3];

@@ -31,18 +31,26 @@
 
 using namespace std;
 
-
+long dataUploadTime;
+long kernelTimer;
+long readTimer;
+long overHeadTimer;
 
 int main(int argc, char* argv[])
 {
-	string extension = ".bi";;
+	dataUploadTime = 0;
+	kernelTimer = 0;
+	readTimer = 0;
+	overHeadTimer = 0;
+	string extension = "_dragon.bi";;
 	string triangleFile = "trianglesBinary", materialsFile = "materialsBinary", lightsFile = "lightsBinary", treeFile = "treeBinary", cameraFile = "camBinary";
 
-	Scene parsedScene;
-	parsedScene.SceneToBinFiles(triangleFile + extension, materialsFile + extension, lightsFile + extension, treeFile + extension, cameraFile + extension);
+	//Scene parsedScene;
+	//parsedScene.SceneToBinFiles(triangleFile + extension, materialsFile + extension, lightsFile + extension, treeFile + extension, cameraFile + extension);
 
 
 	long runTImes[FRAME_COUNT];
+	long kernelTimes[FRAME_COUNT];
 
 	Scene scene(triangleFile+extension, materialsFile+extension, lightsFile+extension, treeFile+extension, cameraFile+extension);
 
@@ -51,17 +59,24 @@ int main(int argc, char* argv[])
 
 	vector<Vector3> outColors;
 	vector<HitPoint> outHits;
-	vector<ClRay> outRays;
+
+	IntersectionKernel intersections(width, height, scene);
+	MaterialColorKernel materialColors(width, height, scene);
+
+	int triangleCount = scene.shapes.size();
+	int nodesCount = scene.tree.getNodesList()->size();
 
 	for (int frame = 0; frame < FRAME_COUNT; frame++){
 		long startTime = GetTickCount64();
 
 		
-		IntersectionKernel intersections(width, height, scene, outHits, outRays);
+		intersections.invokeKernel(width, height, outHits);
 
 
+		materialColors.invokeKernel(width, height, outHits, outColors);
 		
-		MaterialColorKernel materialColors(width, height, scene, outHits, outColors);
+
+		kernelTimes[frame] = GetTickCount64() - startTime;
 
 		Buffer buffer = Buffer(RES, RES);
 
@@ -137,7 +152,7 @@ int main(int argc, char* argv[])
 
 	for (int i = 0; i < FRAME_COUNT; i++)
 	{
-		cout << "Run time " << i << ": " << runTImes[i] << endl;
+		cout << "Run time " << i << ": " << runTImes[i] <<  " K time " << kernelTimes[i] << endl;
 		sum += runTImes[i];
 	}
 

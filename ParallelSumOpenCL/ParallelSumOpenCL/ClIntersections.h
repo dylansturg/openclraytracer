@@ -118,7 +118,8 @@ int intersectTree(HitPoint* hitPoint, Ray* ray, __global Node* nodes, int nodeCo
         Node curNode = nodes[curIndex];
         
         BoundingBox bBox = curNode.bBox;
-    
+
+		    
         if (intersectBoundingBox(hitPoint, ray, &bBox) == 0)
 		{
 			if (curNode.isLeaf != 1)
@@ -140,7 +141,7 @@ int intersectTree(HitPoint* hitPoint, Ray* ray, __global Node* nodes, int nodeCo
                 }
 				}
 			}
-		}  
+		}
     }
     return 0;
 }

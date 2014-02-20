@@ -3,7 +3,7 @@
 
 float3 calculateLighting(__global Material* hitMaterial, __global Light* light, __global Material* lightMaterial, HitPoint* hitpoint, float3 viewDirection, __global Triangle* triangles, int triangleSize, __global Node* nodes, int nodeCount);
 
-__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, int lightSize, __global Triangle* triangles, int triangleSize, __global Node* nodeLists, int nodeCount, __global float* colors, float cameraOriginX, float cameraOriginY, float cameraOriginZ)
+__kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Material* materials, __global Light* lights, int lightSize, __global Triangle* triangles, int triangleSize, __global Node* nodeLists, int nodeCount, __global float* colors, __global Camera* camera)
 {
 	int id = get_global_id(0);
 
@@ -20,7 +20,7 @@ __kernel void calculateMaterialColors(__global HitPoint* hitPoints, __global Mat
     poppedHit.normal[2] = hitPoints[id].normal[2];
 
     float3 color = (float3) (0,0,0);
-    float3 origin = (float3) (cameraOriginX, cameraOriginY, cameraOriginZ);
+    float3 origin = camera->position;
     int limit = 2;
     float colorScalar = 1.0f;
     int loopCount = 0;

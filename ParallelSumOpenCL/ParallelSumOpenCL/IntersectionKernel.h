@@ -12,31 +12,43 @@
 
 using namespace std;
 
+extern long dataUploadTime;
+extern long kernelTimer;
+extern long readTimer;
+extern long overHeadTimer;
+
 class IntersectionKernel{
 public:
+	ClKernel clKernel;
+	cl_mem trianglesBuffer, nodesBuffer, cameraBuffer, hitPointsBuffer;
 
-	IntersectionKernel(int width, int height, Scene& scene, vector<HitPoint>& outHits, vector<ClRay>& outRays){
-
+	IntersectionKernel(int width, int height, Scene& scene){
+		long startTime = GetTickCount64();
 		cl_int err;
-		ClKernel clKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_GPU, "calculateHitPoints");
+		this->clKernel = ClKernel("HitPointCalculator.cl", CL_DEVICE_TYPE_GPU, "calculateHitPoints");
 
 		vector<Triangle> triangles = scene.shapes;
 		vector<BVHNode>* nodes = scene.tree.getNodesList();
 
-		cl_mem trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
+		overHeadTimer += GetTickCount64() - startTime;
+
+		startTime = GetTickCount64();
+
+		trianglesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (triangles.size()) * sizeof(Triangle), (void *)&triangles[0], &err);
 		clKernel.checkErr(err, "creating triangle buffer");
 
-		cl_mem nodesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (nodes->size()) * sizeof(BVHNode), (void *)&(*nodes)[0], &err);
+		nodesBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (nodes->size()) * sizeof(BVHNode), (void *)&(*nodes)[0], &err);
 		clKernel.checkErr(err, "creating nodes buffer");
 
 
 		Camera camera = scene.camera;
-		cl_mem cameraBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (1) * sizeof(Camera), (void *)&camera, &err);
+		cameraBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (1) * sizeof(Camera), (void *)&camera, &err);
 		clKernel.checkErr(err, "creating camera buffer");
 
-		cl_mem hitPoints = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height) * sizeof(HitPoint), NULL, &err);
+		hitPointsBuffer = clKernel.createBuffer(CL_MEM_WRITE_ONLY, (width*height) * sizeof(HitPoint), NULL, &err);
 		clKernel.checkErr(err, "creating output buffer");
 
+		dataUploadTime += GetTickCount64() - startTime;
 
 		int trianglesSize = triangles.size();
 
@@ -67,22 +79,10 @@ public:
 		err = clKernel.setKernelArg(argIndex++, sizeof(int), &height);
 		clKernel.checkErr(err, "setting kernel arg");
 
-		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&hitPoints);
+		err = clKernel.setKernelArg(argIndex++, sizeof(cl_mem), (void *)&hitPointsBuffer);
 		clKernel.checkErr(err, "setting kernel arg");
 
-		cl_event kernelEvent;
-
-		int requiredKernelExecutions = width*height;
-		int i = 0;
-		//for (i = 0; i < requiredKernelExecutions; i += MAX_CONCURRENT_KERNELS){
-			size_t global_work_size = width*height;
-			size_t offset = i;
-			err = clKernel.runKernel(1, &offset, &global_work_size, NULL, 0, NULL, &kernelEvent);
-			clKernel.checkErr(err, "starting the kernel");
-
-			err = clWaitForEvents(1, &kernelEvent);
-			clKernel.checkErr(err, "kernel execution");
-		//}
+		overHeadTimer += GetTickCount64() - startTime;
 
 		//if (i > requiredKernelExecutions)
 		//{
@@ -97,13 +97,12 @@ public:
 		//	clKernel.checkErr(err, "kernel execution");
 		//}
 
-		/*Step 11: Read the cout put back to host memory.*/
-		outHits.resize(width*height);
-		err = clKernel.readBuffer(hitPoints, CL_TRUE, 0, width*height * sizeof(HitPoint), (void*)&outHits[0], 0, NULL, NULL);
-		clKernel.checkErr(err, "reading buffer");
 
-		/*Step 12: Clean the resources.*/
+	}
 
+	~IntersectionKernel()
+	{
+		cl_int err;
 		err = clReleaseMemObject(nodesBuffer);		//Release mem object.
 		clKernel.checkErr(err, "freeing args");
 
@@ -111,8 +110,36 @@ public:
 		clKernel.checkErr(err, "freeing args");
 		err = clReleaseMemObject(cameraBuffer);
 		clKernel.checkErr(err, "freeing args");
-		err = clReleaseMemObject(hitPoints);
+		err = clReleaseMemObject(hitPointsBuffer);
 		clKernel.checkErr(err, "freeing args");
+	}
+
+	bool invokeKernel(int width, int height, vector<HitPoint> & outHits, Camera* sceneCam = NULL)
+	{
+		cl_event kernelEvent;
+		cl_int err;
+
+		int requiredKernelExecutions = width*height;
+		int i = 0;
+		long startTime = GetTickCount64();
+		//for (i = 0; i < requiredKernelExecutions; i += MAX_CONCURRENT_KERNELS){
+		size_t global_work_size = width*height;
+		size_t offset = i;
+		err = clKernel.runKernel(1, &offset, &global_work_size, NULL, 0, NULL, &kernelEvent);
+		clKernel.checkErr(err, "starting the kernel");
+
+		err = clWaitForEvents(1, &kernelEvent);
+		clKernel.checkErr(err, "kernel execution");
+		//}
+
+		outHits.resize(width*height);
+		err = clKernel.readBuffer(hitPointsBuffer, CL_TRUE, 0, width*height * sizeof(HitPoint), (void*)&outHits[0], 0, NULL, NULL);
+		clKernel.checkErr(err, "reading buffer");
+		readTimer += GetTickCount64() - startTime;
+
+		kernelTimer += GetTickCount64() - startTime;
+
+		return true;
 	}
 
 private:

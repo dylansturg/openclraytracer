@@ -19,7 +19,10 @@ class ClKernel{
 public:
 	ClKernel()
 	{
-
+		this->clContext = (cl_context)NULL;
+		this->clCommandQueue = (cl_command_queue)NULL;
+		this->clKernel = (cl_kernel)NULL;
+		this->clProgram = (cl_program)NULL;
 	}
 
 	ClKernel(string sourceFileName, long deviceType, string kernelFuncName)
@@ -104,10 +107,36 @@ public:
 	}
 
 	~ClKernel(){
-		clReleaseKernel(this->clKernel);
-		clReleaseCommandQueue(this->clCommandQueue);
-		clReleaseContext(this->clContext);
-		clReleaseProgram(this->clProgram);
+		if (this->clContext != NULL){
+			clReleaseKernel(this->clKernel);
+			clReleaseCommandQueue(this->clCommandQueue);
+			clReleaseContext(this->clContext);
+			clReleaseProgram(this->clProgram);
+		}
+	}
+
+	ClKernel & operator=(ClKernel & kernel)
+	{
+		if (this == &kernel)
+			return *this;
+
+		if (this->clContext != NULL){
+			clReleaseKernel(this->clKernel);
+			clReleaseCommandQueue(this->clCommandQueue);
+			clReleaseContext(this->clContext);
+			clReleaseProgram(this->clProgram);
+		}
+
+		this->clCommandQueue = kernel.clCommandQueue;
+		this->clContext = kernel.clContext;
+		this->clKernel = kernel.clKernel;
+		this->clProgram = kernel.clProgram;
+
+		if (kernel.clContext != NULL){
+			kernel.setClNull();
+		}
+
+		return *this;
 	}
 
 	int setKernelArg(cl_uint argIndex, size_t argSize, const void* argValue){
@@ -157,6 +186,14 @@ private:
 	cl_context clContext;
 	cl_command_queue clCommandQueue;
 	cl_program clProgram;
+
+	void setClNull()
+	{
+		this->clCommandQueue = NULL;
+		this->clContext = NULL;
+		this->clKernel = NULL;
+		this->clProgram = NULL;
+	}
 
 
 	int convertToString(string filename, string& s)

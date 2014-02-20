@@ -8,6 +8,7 @@ __kernel void calculateHitPoints(__global Node* nodes, int nodeCount, __global T
 
 	int id = get_global_id(0);
 
+
 	int x = id % width;
 	int y = id / width;
 	Ray ray = getRay(camera, x, y, (float) width, (float) height);
@@ -16,7 +17,7 @@ __kernel void calculateHitPoints(__global Node* nodes, int nodeCount, __global T
     hitPoint.t = FLT_MAX;
     
     intersectTree(&hitPoint, &ray, nodes, nodeCount, triangles, trianglesSize);
-
+    
 	hitPoints[id].t = hitPoint.t;
 	hitPoints[id].position[0] = hitPoint.position[0];
 	hitPoints[id].position[1] = hitPoint.position[1];

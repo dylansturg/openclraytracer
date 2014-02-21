@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
 	string extension = "_dragon.bi";;
 	string triangleFile = "trianglesBinary", materialsFile = "materialsBinary", lightsFile = "lightsBinary", treeFile = "treeBinary", cameraFile = "camBinary";
 
-	//Scene parsedScene;
-	//parsedScene.SceneToBinFiles(triangleFile + extension, materialsFile + extension, lightsFile + extension, treeFile + extension, cameraFile + extension);
+	Scene parsedScene;
+	parsedScene.SceneToBinFiles(triangleFile + extension, materialsFile + extension, lightsFile + extension, treeFile + extension, cameraFile + extension);
 
 
 	long runTImes[FRAME_COUNT];

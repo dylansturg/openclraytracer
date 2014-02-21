@@ -28,7 +28,7 @@
 #include "ContextWrapper.h"
 
 #define RES 2048
-#define FRAME_COUNT 75
+#define FRAME_COUNT 1
 #define TARGET_DEVICE CL_DEVICE_TYPE_GPU
 
 using namespace std;
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	overHeadTimer = 0;
 
 
-	string extension = "_dragon.bi";;
+	string extension = ".bi";;
 	string triangleFile = "trianglesBinary", materialsFile = "materialsBinary", lightsFile = "lightsBinary", treeFile = "treeBinary", cameraFile = "camBinary";
 
 	Scene parsedScene;
@@ -68,9 +68,12 @@ int main(int argc, char* argv[])
 	dif *= dif;
 	float rotateRadius = sqrt(dif[0] + dif[1] + dif[2]);
 
-	scene.camera = Camera(Vector3(rotateRadius, 0.05, 0) + sceneCenter, sceneCenter, Vector3(0, 1, 0));
-	scene.cameraLookingAt = sceneCenter;
-	scene.cameraUp = Vector3(0, 1, 0);
+	/*
+		Camera operations used for rendering rotating scenes with a moving camera.
+	*/
+	//scene.camera = Camera(Vector3(rotateRadius, 0.05, 0) + sceneCenter, sceneCenter, Vector3(0, 1, 0));
+	//scene.cameraLookingAt = sceneCenter;
+	//scene.cameraUp = Vector3(0, 1, 0);
 
 	vector<Vector3> outColors;
 	vector<HitPoint> outHits;

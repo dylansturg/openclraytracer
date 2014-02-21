@@ -29,6 +29,7 @@
 
 #define RES 512
 #define FRAME_COUNT 25
+#define TARGET_DEVICE CL_DEVICE_TYPE_GPU
 
 using namespace std;
 
@@ -64,7 +65,7 @@ int main(int argc, char* argv[])
 	vector<Vector3> outColors;
 	vector<HitPoint> outHits;
 
-	ContextWrapper context(CL_DEVICE_TYPE_GPU);
+	ContextWrapper context(TARGET_DEVICE);
 
 	IntersectionKernel intersections(width, height, scene, context);
 	MaterialColorKernel materialColors(width, height, scene, context);

@@ -23,6 +23,8 @@
 #include "CPURayTracer\Rays\Ray.h"
 #include "BVHTree.h"
 
+#define OBJ_FILE "cornell_box.obj"
+
 using namespace std;
 
 class Scene{
@@ -97,7 +99,7 @@ public:
 	Scene(){
 
 		objLoader *objData = new objLoader();
-		objData->load("cornell_box.obj");
+		objData->load(OBJ_FILE);
 
 		//create Triangles
 		for (int i = 0; i<objData->faceCount; i++)

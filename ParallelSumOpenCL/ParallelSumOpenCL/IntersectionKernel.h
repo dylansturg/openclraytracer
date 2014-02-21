@@ -110,6 +110,16 @@ public:
 		cl_event kernelEvent;
 		cl_int err;
 
+		if (sceneCam != NULL){
+			err = clReleaseMemObject(cameraBuffer);
+			clKernel.checkErr(err, "freeing args");
+			cameraBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (1) * sizeof(Camera), (void *)sceneCam, &err);
+			clKernel.checkErr(err, "creating camera buffer");
+
+			err = clKernel.setKernelArg(4, sizeof(cl_mem), (void *)&cameraBuffer);
+			clKernel.checkErr(err, "setting kernel arg 3");
+		}
+
 		int requiredKernelExecutions = width*height;
 		int i = 0;
 		long startTime = GetTickCount64();

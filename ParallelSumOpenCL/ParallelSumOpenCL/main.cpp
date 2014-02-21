@@ -27,8 +27,8 @@
 #include "CPURayTracer\RayTracer.h"
 #include "ContextWrapper.h"
 
-#define RES 512
-#define FRAME_COUNT 25
+#define RES 2048
+#define FRAME_COUNT 75
 #define TARGET_DEVICE CL_DEVICE_TYPE_GPU
 
 using namespace std;
@@ -62,6 +62,16 @@ int main(int argc, char* argv[])
 	int width = RES;
 	int height = RES;
 
+	Vector3 sceneCenter = scene.tree.getNodesList()->at(0).bBox.getCenter();
+	Vector3 camCenter = Vector3(scene.camera.Pos.s[0], scene.camera.Pos.s[1], scene.camera.Pos.s[2]);
+	Vector3 dif = sceneCenter - camCenter;
+	dif *= dif;
+	float rotateRadius = sqrt(dif[0] + dif[1] + dif[2]);
+
+	scene.camera = Camera(Vector3(rotateRadius, 0.05, 0) + sceneCenter, sceneCenter, Vector3(0, 1, 0));
+	scene.cameraLookingAt = sceneCenter;
+	scene.cameraUp = Vector3(0, 1, 0);
+
 	vector<Vector3> outColors;
 	vector<HitPoint> outHits;
 
@@ -77,11 +87,11 @@ int main(int argc, char* argv[])
 		long startTime = GetTickCount64();
 
 		
-		intersections.invokeKernel(width, height, outHits);
+		intersections.invokeKernel(width, height, outHits, &(scene.camera));
 
 		intersectionTimes[frame] = GetTickCount64() - startTime;
 
-		materialColors.invokeKernel(width, height, intersections.hitPointsBuffer, outColors);
+		materialColors.invokeKernel(width, height, intersections.hitPointsBuffer, outColors, &(scene.camera));
 		
 
 		kernelTimes[frame] = GetTickCount64() - startTime;
@@ -146,12 +156,12 @@ int main(int argc, char* argv[])
 		//}
 
 		char filename[100];
-		sprintf_s(filename, "ray_tracer_%d.ppm", frame);
+		sprintf_s(filename, "ray_tracer_animation_%d.ppm", frame);
 
 		simplePPM_write_ppm(filename, RES, RES, (unsigned char *)&buffer.at(0, 0));
-		//Vector3 newPos = Vector3(scene.camera.Pos.s[0], scene.camera.Pos.s[1], scene.camera.Pos.s[2]);
-		//newPos += Vector3(cos(i*2*3.14/FRAME_COUNT), 0, sin(i*2*3.14/FRAME_COUNT));
-		//scene.camera = Camera(newPos, scene.cameraLookingAt, scene.cameraUp);
+		Vector3 camPos = Vector3(scene.camera.Pos.s[0], scene.camera.Pos.s[1], scene.camera.Pos.s[2]);
+		camPos = sceneCenter + rotateRadius * Vector3(cos(frame * 2 * 3.14 / FRAME_COUNT), 0, sin(frame * 2 * 3.14 / FRAME_COUNT));
+		scene.camera = Camera(camPos, scene.cameraLookingAt, scene.cameraUp);
 
 		runTImes[frame] = GetTickCount64() - startTime;
 	}

@@ -106,6 +106,16 @@ public:
 		//hitPointsBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (hitPoints.size()) * sizeof(HitPoint), (void *)&hitPoints[0], &err);
 		//clKernel.checkErr(err, "creating hit points buffer");
 
+		if (sceneCam != NULL){
+			err = clReleaseMemObject(cameraBuffer);
+			clKernel.checkErr(err, "freeing args");
+			cameraBuffer = clKernel.createBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (1) * sizeof(Camera), (void *)sceneCam, &err);
+			clKernel.checkErr(err, "creating camera buffer");
+
+			err = clKernel.setKernelArg(9, sizeof(cl_mem), (void *)&cameraBuffer);
+			clKernel.checkErr(err, "setting kernel arg 3");
+		}
+
 		err = clKernel.setKernelArg(0, sizeof(cl_mem), (void *)&hitpoints);
 		clKernel.checkErr(err, "setting kernel arg 0");
 
